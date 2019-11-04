@@ -21,10 +21,7 @@ public class SecurityAccount extends Account {
             System.out.println("Cannot buy more than bank's inventory!");
             return;
         }
-        // pay fee
-        transactions.add(new Transaction(-ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
-        bank.addTransaction(new Transaction(ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
-        
+
         double amount = 0;
         switch(currency) {
             case USD: 
@@ -58,9 +55,6 @@ public class SecurityAccount extends Account {
             System.out.println("Cannot sell more than current biggest shares");
             return;
         }
-        // pay fee
-        transactions.add(new Transaction(-ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
-        bank.addTransaction(new Transaction(ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
         
         // add money on saving account
         double amount = twoDecimal(shares *bank.getStocks().get(name).price);
