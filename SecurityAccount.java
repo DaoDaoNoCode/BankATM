@@ -1,0 +1,73 @@
+import java.util.HashMap;
+import java.util.Date;
+
+public class SecurityAccount extends Account {
+    private HashMap<String, Stock> stocks;
+    public SecurityAccount(Bank bank, Customer customer, String password, Date date) {
+        super(bank, customer, password, date);
+        type = AccountType.SAVINGS;
+        stocks = new HashMap<>();
+    }
+
+    /* 
+        UI 给出下拉选项: 
+        currency, saving account, 
+        Stockname, shares
+    */                
+    public void buyStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
+        Stock bankStock = bank.getStocks().get(name);
+
+        if (shares > bankStock.shares) {
+            System.out.println("Cannot buy more than bank's inventory!");
+            return;
+        }
+        // pay fee
+        transactions.add(new Transaction(-ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
+        bank.addTransaction(new Transaction(ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
+        
+        double amount = 0;
+        switch(currency) {
+            case USD: 
+                amount = twoDecimal(shares * bankStock.getUSDPrice());
+            case CNY:
+                amount = twoDecimal(shares * bankStock.getRMBPrice());
+            case EUR: 
+                amount = twoDecimal(shares * bankStock.getEurPrice());
+        }
+        
+        if (account.getDeposit(currency) < amount) {
+            System.out.println("Saving account money insufficient!");
+        }
+        else {
+            // update customer stocks
+            if (stocks.containsKey(name)) {
+                stocks.get(name).buyShares(shares);
+            } else {
+                stocks.put(name, new Stock(name, bankStock.price, shares));
+            }
+            // reduce money on saving account
+            account.withdraw(amount, currency, date);
+            // update bank stocks
+            bankStock.sellShares(shares);
+            
+        }
+    }
+
+    public void sellStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
+        if (shares > stocks.get(name).shares) {
+            System.out.println("Cannot sell more than current biggest shares");
+            return;
+        }
+        // pay fee
+        transactions.add(new Transaction(-ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
+        bank.addTransaction(new Transaction(ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
+        
+        // add money on saving account
+        double amount = twoDecimal(shares *bank.getStocks().get(name).price);
+        account.save(amount, currency, date);
+        // update customer stocks
+        stocks.get(name).sellShares(shares);
+        // update bank stocks
+        bank.getStocks().get(name).buyShares(shares);
+    }
+}

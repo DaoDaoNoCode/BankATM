@@ -12,10 +12,12 @@ public class Bank {
 
     private ArrayList<Transaction> bankerTransactions;
 
+    private HashMap<String, Stock> stocks;
 
     public Bank() {
         customers = new ArrayList<>();
         bankerTransactions = new ArrayList<>();
+        stocks = new HashMap<>();
     }
 
     public void registerCustomer(Customer customer) {
@@ -70,5 +72,40 @@ public class Bank {
             moneyEarned.put(currency, Account.twoDecimal(transMoney + earnedMoney));
         }
         return moneyEarned;
+    }
+
+
+    /* 
+        Stock Part
+    */
+    
+    public HashMap<String, Stock> getStocks() {
+        return this.stocks;
+    }
+    // name 在UI里用下拉框选择
+    // price 在UI里填写
+    public void setStockPrice(String name, double price) {
+        stocks.get(name).setPrice(price);
+    }
+
+    public void deleteStock(String name) {
+        if (stocks.get(name).shares > 0) {
+            System.out.println("cannot delete a stock with positive shares");
+        } 
+        else {
+            stocks.remove(name);
+        }
+    }
+
+    public void addNewStock(String name, double price, int shares) {
+        Stock newStock = new Stock(name, price, shares);
+        stocks.put(name, newStock);
+    }
+    public void addStockShare(String name, int shares) {
+        stocks.get(name).buyShares(shares);
+    }
+
+    public void reduceStockShare(String name, int shares) {
+        stocks.get(name).sellShares(shares);
     }
 }
