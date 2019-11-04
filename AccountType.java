@@ -3,5 +3,5 @@
  */
 
 public enum AccountType {
-    SAVINGS, CHECKING
+    SAVINGS, CHECKING, SECURITY
 }

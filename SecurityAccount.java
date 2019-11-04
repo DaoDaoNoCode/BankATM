@@ -2,10 +2,12 @@ import java.util.HashMap;
 import java.util.Date;
 
 public class SecurityAccount extends Account {
+
     private HashMap<String, Stock> stocks;
+
     public SecurityAccount(Bank bank, Customer customer, String password, Date date) {
         super(bank, customer, password, date);
-        type = AccountType.SAVINGS;
+        type = AccountType.SECURITY;
         stocks = new HashMap<>();
     }
 

@@ -17,7 +17,7 @@ public class Customer {
 
     private ArrayList<CheckingAccount> checkingAccounts;
 
-    private ArrayList<SecurityAccount> securityAccounts;
+    private SecurityAccount securityAccounts;
 
     private ArrayList<Account> closedAccounts;
 
@@ -28,7 +28,7 @@ public class Customer {
         this.savingsAccounts = new ArrayList<>();
         this.checkingAccounts = new ArrayList<>();
         this.closedAccounts = new ArrayList<>();
-        this.securityAccounts = new ArrayList<>();
+        this.securityAccounts = null;
     }
 
     public String getUsername() {
@@ -47,7 +47,7 @@ public class Customer {
         return this.checkingAccounts;
     }
     
-    public ArrayList<SecurityAccount> getSecurityAccounts() {
+    public SecurityAccount getSecurityAccounts() {
         return this.securityAccounts;
     }
 
@@ -67,7 +67,7 @@ public class Customer {
             account.openAccount();
         } else {
             account = new SecurityAccount(bank, this, password, date);
-            securityAccounts.add((SecurityAccount) account);
+            securityAccounts = (SecurityAccount) account;
             account.openAccount();
         }
         return account;
@@ -78,8 +78,10 @@ public class Customer {
         closedAccounts.add(account);
         if (account.getType() == AccountType.CHECKING) {
             checkingAccounts.remove(account);
-        } else {
+        } else if (account.getType() == AccountType.SAVINGS) {
             savingsAccounts.remove(account);
+        } else {
+            this.securityAccounts = null;
         }
     }
 
