@@ -47,6 +47,13 @@ public class Database {
         }
     }
 
+    public static void setForeignKey(String tableName, String foreignKey, String targetTable, String targetArg) {
+        if (foreignKey != null) {
+            String foreignKeySql = "ALTER TABLE " + tableName + " ADD FOREIGN KEY (" + foreignKey + ") REFERENCES " + targetTable + "(" + targetArg + ")";
+            excuteSQL(foreignKeySql);
+        }
+    }
+
     public static boolean hasTable(String tableName) {
         try {
             Class.forName(driver);
