@@ -129,7 +129,7 @@ public class Database {
         excuteSQL(updateSql);
     }
 
-    public static List<String> queryData(String tableName, String index, String value, String[] args) {
+    public static List<List<String>> queryData(String tableName, String index, String value, String[] args) {
         StringBuilder sbQuery = new StringBuilder();
         sbQuery.append("SELECT ");
         for (String arg : args) {
@@ -145,16 +145,18 @@ public class Database {
         sbQuery.append(value);
         sbQuery.append("'");
         String querySql = sbQuery.toString();
-        List<String> list = new ArrayList<>();
+        List<List<String>> list = new ArrayList<>();
         try {
             Class.forName(driver);
             Connection conn = DriverManager.getConnection(url, user, password);
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(querySql);
             while (resultSet.next()) {
+                List<String> list1 = new ArrayList<>();
                 for (String arg : args) {
-                    list.add(resultSet.getString(arg));
+                    list1.add(resultSet.getString(arg));
                 }
+                list.add(list1);
             }
             statement.close();
             conn.close();

@@ -12,12 +12,12 @@ public class Test {
         //setPrimaryKey(tableName, "USER_NAME");
         String[] insertedValues = new String[]{"User5", "123456"};
         //insertData(tableName, insertedValues);
-        String[] updateArgs = new String[]{"PASSWORD"};
+        String[] updateArgs = new String[]{"USER_NAME", "PASSWORD"};
         String[] updateValues = new String[]{"User4", "123"};
         //updateData(tableName, "USER_NAME", "User3", updateArgs, updateValues);
         //deleteData(tableName, "USER_NAME", "User2");
         //dropTable(tableName);
-        List<String> list = Database.queryData(tableName, "USER_NAME", "User4", updateArgs);
+        List<List<String>> list = Database.queryData(tableName, "PASSWORD", "123456", updateArgs);
         System.out.println(list);
     }
 }
