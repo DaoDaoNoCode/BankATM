@@ -139,11 +139,13 @@ public class Database {
         sbQuery.deleteCharAt(sbQuery.length() - 1);
         sbQuery.append(" FROM ");
         sbQuery.append(tableName);
-        sbQuery.append(" WHERE ");
-        sbQuery.append(index);
-        sbQuery.append("='");
-        sbQuery.append(value);
-        sbQuery.append("'");
+        if (index != null) {
+            sbQuery.append(" WHERE ");
+            sbQuery.append(index);
+            sbQuery.append("='");
+            sbQuery.append(value);
+            sbQuery.append("'");
+        }
         String querySql = sbQuery.toString();
         List<List<String>> list = new ArrayList<>();
         try {
