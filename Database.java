@@ -37,20 +37,20 @@ public class Database {
         sbCreate.deleteCharAt(sbCreate.length() - 1); // delete the last comma
         sbCreate.append(")");
         String createTableSql = sbCreate.toString();
-        excuteSQL(createTableSql);
+        executeSQL(createTableSql);
     }
 
     public static void setPrimaryKey(String tableName, String primaryKey) {
         if (primaryKey != null) {
             String primaryKeySql = "ALTER TABLE " + tableName + " ADD PRIMARY KEY (" + primaryKey + ")";
-            excuteSQL(primaryKeySql);
+            executeSQL(primaryKeySql);
         }
     }
 
     public static void setForeignKey(String tableName, String foreignKey, String targetTable, String targetArg) {
         if (foreignKey != null) {
             String foreignKeySql = "ALTER TABLE " + tableName + " ADD FOREIGN KEY (" + foreignKey + ") REFERENCES " + targetTable + "(" + targetArg + ")";
-            excuteSQL(foreignKeySql);
+            executeSQL(foreignKeySql);
         }
     }
 
@@ -75,7 +75,7 @@ public class Database {
 
     public static void dropTable(String tableName) {
         String dropSql = "DROP TABLE " + tableName;
-        excuteSQL(dropSql);
+        executeSQL(dropSql);
     }
 
     public static void insertData(String tableName, String[] values) {
@@ -92,7 +92,7 @@ public class Database {
         sbInsert.deleteCharAt(sbInsert.length() - 1); // delete the last comma
         sbInsert.append(")");
         String insertSql = sbInsert.toString();
-        excuteSQL(insertSql);
+        executeSQL(insertSql);
     }
 
     public static void deleteData(String tableName, String index, String value) {
@@ -105,7 +105,7 @@ public class Database {
         sbDelete.append(value);
         sbDelete.append("'");
         String deleteSql = sbDelete.toString();
-        excuteSQL(deleteSql);
+        executeSQL(deleteSql);
     }
 
     public static void updateData(String tableName, String index, String value, String[] args, String[] updateValues) {
@@ -126,7 +126,7 @@ public class Database {
         sbUpdate.append(value);
         sbUpdate.append("'");
         String updateSql = sbUpdate.toString();
-        excuteSQL(updateSql);
+        executeSQL(updateSql);
     }
 
     public static List<List<String>> queryData(String tableName, String index, String value, String[] args) {
@@ -169,7 +169,7 @@ public class Database {
         return list;
     }
 
-    private static void excuteSQL(String sql) {
+    private static void executeSQL(String sql) {
         try {
             Class.forName(driver);
             Connection conn = DriverManager.getConnection(url, user, password);
