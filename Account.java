@@ -105,6 +105,24 @@ public class Account {
     public void save(double money, Currency currency, Date date) {
         double balance = deposit.get(currency);
         deposit.put(currency, twoDecimal(balance + money));
+        String tableName;
+        if (this.type == AccountType.CHECKING) {
+            tableName = "CHECKING_ACCOUNT";
+        } else if (this.type == AccountType.SAVINGS) {
+            tableName = "SAVINGS_ACCOUNT";
+        } else {
+            tableName = "SECURITY_ACCOUNT";
+        }
+        String[] args;
+        if (currency == Currency.USD) {
+            args = new String[]{"USD_BALANCE"};
+        } else if (currency == Currency.EUR) {
+            args = new String[]{"EUR_BALANCE"};
+        } else {
+            args = new String[]{"CNY_BALANCE"};
+        }
+        String[] updateValues = {deposit.get(currency).toString()};
+        Database.updateData(tableName, "ACCOUNT_NUMBER", number, args, updateValues);
         transactions.add(new Transaction(money, currency, TransactionType.SAVE, owner, this, date));
     }
 

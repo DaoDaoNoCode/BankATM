@@ -158,8 +158,14 @@ public class Customer {
         closedAccounts.add(account);
         if (account.getType() == AccountType.CHECKING) {
             checkingAccounts.remove(account);
+            String[] args = {"STATUS"};
+            String[] updateValues = {"CLOSED"};
+            Database.updateData(checkingAccountTableName, "ACCOUNT_NUMBER", account.getNumber(), args, updateValues);
         } else if (account.getType() == AccountType.SAVINGS) {
             savingsAccounts.remove(account);
+            String[] args = {"STATUS"};
+            String[] updateValues = {"CLOSED"};
+            Database.updateData(savingsAccountTableName, "ACCOUNT_NUMBER", account.getNumber(), args, updateValues);
         } else {
             this.securityAccount = null;
         }
