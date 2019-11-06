@@ -65,11 +65,16 @@ public class SavingsAccount extends Account {
         else {
             double balance = deposit.get(currency);
             loan.put(currency, twoDecimal(money + balance));
+            updateLoanInDatabase(currency);
+
             BigDecimal interestRateBig = BigDecimal.valueOf(0.001);
             BigDecimal moneyBig = BigDecimal.valueOf(money);
             double currentInterest = interestRateBig.multiply(moneyBig).doubleValue();
             loanInterest.put(currency, twoDecimal(currentInterest));
+            updateLoanInDatabase(currency);
+
             deposit.put(currency, twoDecimal(money));
+            updateDepositInDatabase(currency);
             transactions.add(new Transaction(money, currency, TransactionType.LOAN, owner, this, date));
             return 1;
         }
@@ -90,6 +95,7 @@ public class SavingsAccount extends Account {
                     BigDecimal currentLoanBig = BigDecimal.valueOf(currentLoan);
                     BigDecimal currentLoanBigRate = BigDecimal.valueOf(0.001);
                     loanInterest.put(currency, twoDecimal(currentLoanBig.multiply(daysBig.multiply(currentLoanBigRate)).doubleValue()));
+                    updateLoanInDatabase(currency);
                 }
             }
         }
@@ -112,8 +118,11 @@ public class SavingsAccount extends Account {
             } else {
                 double currentBalance = deposit.get(currency);
                 loan.put(currency, 0.0);
+                updateLoanInDatabase(currency);
                 loanInterest.put(currency, 0.0);
+                updateLoanInDatabase(currency);
                 deposit.put(currency, twoDecimal(currentBalance - currentLoan - currentInterest));
+                updateLoanInDatabase(currency);
                 transactions.add(new Transaction(-currentLoan, currency, TransactionType.LOAN_REPAY, owner, this, date));
                 transactions.add(new Transaction(-currentInterest, currency, TransactionType.LOAN_INTEREST, owner, this, date));
                 bank.addTransaction(new Transaction(currentInterest, currency, TransactionType.LOAN_INTEREST, owner, this, date));
@@ -121,7 +130,19 @@ public class SavingsAccount extends Account {
             }
         }
     }
-
+    protected void updateLoanInDatabase(Currency currency) {
+        String tableName = "SAVINGS_ACCOUNT";
+        String[] args;
+        if (currency == Currency.USD) {
+            args = new String[]{"USD_LOAN", "USD_INTEREST"};
+        } else if (currency == Currency.EUR) {
+            args = new String[]{"EUR_LOAN", "EUR_INTEREST"};
+        } else {
+            args = new String[]{"CNY_LOAN", "CNY_INTEREST"};
+        }
+        String[] updateValues = {loan.get(currency).toString(), loanInterest.get(currency).toString()};
+        Database.updateData(tableName, "ACCOUNT_NUMBER", number, args, updateValues);
+    }
     @Override
     public String toString() {
         return type + " - " + number;

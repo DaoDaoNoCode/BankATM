@@ -176,6 +176,7 @@ public class Account {
                     BigDecimal currentBalanceBig = BigDecimal.valueOf(currentBalance);
                     double saveInterest = saveInterestRateBig.multiply(currentBalanceBig).doubleValue();
                     deposit.put(currency, twoDecimal(currentBalance + saveInterest));
+                    updateDepositInDatabase(currency);
                     currentBalance += saveInterest;
                     loop--;
                     calendar.add(Calendar.DATE, 1);
