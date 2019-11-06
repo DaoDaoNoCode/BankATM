@@ -105,6 +105,11 @@ public class Account {
     public void save(double money, Currency currency, Date date) {
         double balance = deposit.get(currency);
         deposit.put(currency, twoDecimal(balance + money));
+        updateDepositInDatabase(currency);
+        transactions.add(new Transaction(money, currency, TransactionType.SAVE, owner, this, date));
+    }
+
+    protected void updateDepositInDatabase(Currency currency) {
         String tableName;
         if (this.type == AccountType.CHECKING) {
             tableName = "CHECKING_ACCOUNT";
@@ -123,7 +128,6 @@ public class Account {
         }
         String[] updateValues = {deposit.get(currency).toString()};
         Database.updateData(tableName, "ACCOUNT_NUMBER", number, args, updateValues);
-        transactions.add(new Transaction(money, currency, TransactionType.SAVE, owner, this, date));
     }
 
     /**
@@ -146,6 +150,7 @@ public class Account {
             return 0;
         } else {
             deposit.put(currency, twoDecimal(balance - money - withdrawFee));
+            updateDepositInDatabase(currency);
             transactions.add(new Transaction(-money, currency, TransactionType.WITHDRAW, owner, this, date));
             transactions.add(new Transaction(-withdrawFee, currency, TransactionType.WITHDRAW_FEE, owner, this, date));
             bank.addTransaction(new Transaction(withdrawFee, currency, TransactionType.WITHDRAW_FEE, owner, this, date));

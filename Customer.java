@@ -30,15 +30,15 @@ public class Customer {
 
     private final String securityAccountTableName = "SECURITY_ACCOUNT";
 
-    private final String[] checkingAccountCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "OWNER varchar(20) not null", "PASSWORD varchar(20) not null", "USD_BALANCE varchar(20) not null", "EUR_BALANCE varchar(20) not null", "CNY_BALANCE varchar(20) not null", "DATE varchar(12) not null", "STATUS varchar(10) not null"};
+    private final String[] checkingAccountCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "OWNER varchar(20) not null", "PASSWORD varchar(20) not null", "USD_BALANCE varchar(20) not null", "CNY_BALANCE varchar(20) not null", "EUR_BALANCE varchar(20) not null", "DATE varchar(12) not null", "STATUS varchar(10) not null"};
 
-    private final String[] savingsAccountCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "OWNER varchar(20) not null", "PASSWORD varchar(20) not null", "USD_BALANCE varchar(20) not null", "EUR_BALANCE varchar(20) not null", "CNY_BALANCE varchar(20) not null", "USD_LOAN varchar(20) not null", "EUR_LOAN varchar(20) not null", "CNY_LOAN varchar(20) not null", "USD_INTEREST varchar(20) not null", "EUR_INTEREST varchar(20) not null", "CNY_INTEREST varchar(20) not null", "DATE varchar(12) not null", "STATUS varchar(10) not null"};
+    private final String[] savingsAccountCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "OWNER varchar(20) not null", "PASSWORD varchar(20) not null", "USD_BALANCE varchar(20) not null", "CNY_BALANCE varchar(20) not null", "EUR_BALANCE varchar(20) not null", "USD_LOAN varchar(20) not null", "CNY_LOAN varchar(20) not null", "EUR_LOAN varchar(20) not null", "USD_INTEREST varchar(20) not null", "CNY_INTEREST varchar(20) not null", "EUR_INTEREST varchar(20) not null", "DATE varchar(12) not null", "STATUS varchar(10) not null"};
 
     private final String[] securityAccountCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "OWNER varchar(20) not null", "PASSWORD varchar(20) not null", "STOCK_NAME varchar(20) not null", "STOCK_SHARE varchar(20) not null", "DATE varchar(12) not null", "STATUS varchar(10) not null"};
 
-    private final String[] checkingAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "USD_BALANCE", "EUR_BALANCE", "CNY_BALANCE", "DATE", "STATUS"};
+    private final String[] checkingAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "USD_BALANCE", "CNY_BALANCE", "EUR_BALANCE",  "DATE", "STATUS"};
 
-    private final String[] savingsAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "USD_BALANCE", "EUR_BALANCE", "CNY_BALANCE", "USD_LOAN", "EUR_LOAN", "CNY_LOAN", "USD_INTEREST", "EUR_INTEREST", "CNY_INTEREST", "DATE", "STATUS"};
+    private final String[] savingsAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "USD_BALANCE", "CNY_BALANCE", "EUR_BALANCE", "USD_LOAN", "CNY_LOAN", "EUR_LOAN", "USD_INTEREST", "CNY_INTEREST", "EUR_INTEREST", "DATE", "STATUS"};
 
     private final String[] securityAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "STOCK_NAME", "STOCK_SHARE", "DATE", "STATUS"};
 
