@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class is the whole bank, including all the information in the bank.
@@ -14,14 +15,37 @@ public class Bank {
 
     private HashMap<String, Stock> stocks;
 
+    private final String customerTableName = "CUSTOMER";
+
+    private final String[] customerCreateArgs = {"USERNAME varchar(20) not null", "PASSWORD varchar(20) not null"};
+
+    private final String[] customerArgs = {"USERNAME", "PASSWORD"};
+
+    private final String customerPrimaryKey = "USERNAME";
+
     public Bank() {
-        customers = new ArrayList<>();
+        readCustomerFromDatabase();
         bankerTransactions = new ArrayList<>();
         stocks = new HashMap<>();
     }
 
+    private void readCustomerFromDatabase() {
+        customers = new ArrayList<>();
+        if (!Database.hasTable(customerTableName)) {
+            Database.createTable(customerTableName, customerCreateArgs);
+            Database.setPrimaryKey(customerTableName, customerPrimaryKey);
+        } else {
+            List<List<String>> customers = Database.queryData(customerTableName, null, null, customerArgs);
+            for (List<String> customer : customers) {
+                this.customers.add(new Customer(this, customer.get(0), customer.get(1)));
+            }
+        }
+    }
+
     public void registerCustomer(Customer customer) {
         customers.add(customer);
+        String[] insertedData = new String[]{customer.getUsername(), customer.getPassword()};
+        Database.insertData(customerTableName, insertedData);
     }
 
     public ArrayList<Customer> getCustomers() {
@@ -38,6 +62,7 @@ public class Bank {
 
     public void deleteCustomer(Customer customer) {
         customers.remove(customer);
+        Database.deleteData(customerTableName, customerPrimaryKey, customer.getUsername());
     }
 
     public void calculateLoanInterest(Date date) {
@@ -82,8 +107,7 @@ public class Bank {
     public HashMap<String, Stock> getStocks() {
         return this.stocks;
     }
-    // name 在UI里用下拉框选择
-    // price 在UI里填写
+
     public void setStockPrice(String name, double price) {
         stocks.get(name).setPrice(price);
     }

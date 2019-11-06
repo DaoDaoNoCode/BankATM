@@ -7,8 +7,8 @@ import java.util.Date;
 
 public class CheckingAccount extends Account {
 
-    public CheckingAccount(Bank bank, Customer customer, String password, Date date) {
-        super(bank, customer, password, date);
+    public CheckingAccount(Bank bank, String owner, String password, Date date) {
+        super(bank, owner, password, date);
         type = AccountType.CHECKING;
     }
 
@@ -33,11 +33,11 @@ public class CheckingAccount extends Account {
             return 0;
         } else {
             deposit.put(currency, twoDecimal(balance - money - transferFee));
-            transactions.add(new Transaction(-money, currency, TransactionType.TRANSFER_OUT, customer, this, date));
-            transactions.add(new Transaction(-transferFee, currency, TransactionType.TRANSFER_FEE, customer, this, date));
+            transactions.add(new Transaction(-money, currency, TransactionType.TRANSFER_OUT, owner, this, date));
+            transactions.add(new Transaction(-transferFee, currency, TransactionType.TRANSFER_FEE, owner, this, date));
             account.transferIn(money, currency);
-            account.addTransaction(new Transaction(money, currency, TransactionType.TRANSFER_IN, customer, this, date));
-            bank.addTransaction(new Transaction(transferFee, currency, TransactionType.TRANSFER_FEE, customer, this, date));
+            account.addTransaction(new Transaction(money, currency, TransactionType.TRANSFER_IN, owner, this, date));
+            bank.addTransaction(new Transaction(transferFee, currency, TransactionType.TRANSFER_FEE, owner, this, date));
             return 1;
         }
     }

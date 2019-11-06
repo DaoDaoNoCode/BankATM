@@ -13,7 +13,7 @@ public class Account {
 
     protected Bank bank;
 
-    protected Customer customer;
+    protected String owner;
 
     protected HashMap<Currency, Double> deposit;
 
@@ -27,9 +27,11 @@ public class Account {
 
     protected AccountType type;
 
-    public Account(Bank bank, Customer customer, String password, Date date) {
+    public Account() { }
+
+    public Account(Bank bank, String owner, String password, Date date) {
         this.bank = bank;
-        this.customer = customer;
+        this.owner = owner;
         this.password = password;
         this.transactions = new ArrayList<>();
         this.deposit = new HashMap<>();
@@ -91,20 +93,24 @@ public class Account {
         return this.type;
     }
 
+    public String getPassword() {
+        return this.getPassword();
+    }
+
     public void openAccount() {
-        transactions.add(new Transaction(-ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
-        bank.addTransaction(new Transaction(ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, customer, this, createDate));
+        transactions.add(new Transaction(-ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, owner, this, createDate));
+        bank.addTransaction(new Transaction(ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.OPEN_ACCOUNT_FEE, owner, this, createDate));
     }
 
     public void save(double money, Currency currency, Date date) {
         double balance = deposit.get(currency);
         deposit.put(currency, twoDecimal(balance + money));
-        transactions.add(new Transaction(money, currency, TransactionType.SAVE, customer, this, date));
+        transactions.add(new Transaction(money, currency, TransactionType.SAVE, owner, this, date));
     }
 
     /**
      * Withdraw money, if money less than 1000, then fee rate is 0.05%, else fee rate is 0.1%.
-     * @param money money customer wants to withdraw
+     * @param money money owner wants to withdraw
      * @param currency type of currency
      * @param date withdrawal time
      * @return -1 means withdrawal is invalid, 0 means no enough deposit to withdraw, 1 means withdraw successfully
@@ -122,9 +128,9 @@ public class Account {
             return 0;
         } else {
             deposit.put(currency, twoDecimal(balance - money - withdrawFee));
-            transactions.add(new Transaction(-money, currency, TransactionType.WITHDRAW, customer, this, date));
-            transactions.add(new Transaction(-withdrawFee, currency, TransactionType.WITHDRAW_FEE, customer, this, date));
-            bank.addTransaction(new Transaction(withdrawFee, currency, TransactionType.WITHDRAW_FEE, customer, this, date));
+            transactions.add(new Transaction(-money, currency, TransactionType.WITHDRAW, owner, this, date));
+            transactions.add(new Transaction(-withdrawFee, currency, TransactionType.WITHDRAW_FEE, owner, this, date));
+            bank.addTransaction(new Transaction(withdrawFee, currency, TransactionType.WITHDRAW_FEE, owner, this, date));
             return 1;
         }
     }
@@ -150,8 +156,8 @@ public class Account {
                     currentBalance += saveInterest;
                     loop--;
                     calendar.add(Calendar.DATE, 1);
-                    transactions.add(new Transaction(saveInterest, currency, TransactionType.SAVE_INTEREST, customer, this, calendar.getTime()));
-                    bank.addTransaction(new Transaction(-saveInterest, currency, TransactionType.SAVE_INTEREST, customer, this, calendar.getTime()));
+                    transactions.add(new Transaction(saveInterest, currency, TransactionType.SAVE_INTEREST, owner, this, calendar.getTime()));
+                    bank.addTransaction(new Transaction(-saveInterest, currency, TransactionType.SAVE_INTEREST, owner, this, calendar.getTime()));
                 }
             }
         }
@@ -162,13 +168,13 @@ public class Account {
      * @param date
      */
     public void closeAccount(Date date) {
-        transactions.add(new Transaction(-ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.CLOSE_ACCOUNT_FEE, customer, this, date));
-        bank.addTransaction(new Transaction(ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.CLOSE_ACCOUNT_FEE, customer, this, date));
+        transactions.add(new Transaction(-ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.CLOSE_ACCOUNT_FEE, owner, this, date));
+        bank.addTransaction(new Transaction(ACCOUNT_OPEN_CLOSE_FEE, Currency.USD, TransactionType.CLOSE_ACCOUNT_FEE, owner, this, date));
         for (Currency currency : Currency.values()) {
             double balance = deposit.get(currency);
             if (balance > 0) {
-                transactions.add(new Transaction(-balance, currency, TransactionType.BALANCE_REMAINED_WHEN_CLOSE, customer, this, date));
-                bank.addTransaction(new Transaction(balance, currency, TransactionType.BALANCE_REMAINED_WHEN_CLOSE, customer, this, date));
+                transactions.add(new Transaction(-balance, currency, TransactionType.BALANCE_REMAINED_WHEN_CLOSE, owner, this, date));
+                bank.addTransaction(new Transaction(balance, currency, TransactionType.BALANCE_REMAINED_WHEN_CLOSE, owner, this, date));
             }
         }
     }

@@ -129,7 +129,7 @@ public class Database {
         executeSQL(updateSql);
     }
 
-    public static List<List<String>> queryData(String tableName, String index, String value, String[] args) {
+    public static List<List<String>> queryData(String tableName, String[] index, String[] value, String[] args) {
         StringBuilder sbQuery = new StringBuilder();
         sbQuery.append("SELECT ");
         for (String arg : args) {
@@ -141,12 +141,19 @@ public class Database {
         sbQuery.append(tableName);
         if (index != null) {
             sbQuery.append(" WHERE ");
-            sbQuery.append(index);
+            for (int i = 0; i < index.length - 1; i++) {
+                sbQuery.append(index[i]);
+                sbQuery.append("='");
+                sbQuery.append(value[i]);
+                sbQuery.append("' AND ");
+            }
+            sbQuery.append(index[index.length - 1]);
             sbQuery.append("='");
-            sbQuery.append(value);
+            sbQuery.append(value[value.length - 1]);
             sbQuery.append("'");
         }
         String querySql = sbQuery.toString();
+        System.out.println(querySql);
         List<List<String>> list = new ArrayList<>();
         try {
             Class.forName(driver);

@@ -5,8 +5,8 @@ public class SecurityAccount extends Account {
 
     private HashMap<String, Stock> stocks;
 
-    public SecurityAccount(Bank bank, Customer customer, String password, Date date) {
-        super(bank, customer, password, date);
+    public SecurityAccount(Bank bank, String owner, String password, Date date) {
+        super(bank, owner, password, date);
         type = AccountType.SECURITY;
         stocks = new HashMap<>();
     }
@@ -38,7 +38,7 @@ public class SecurityAccount extends Account {
             System.out.println("Saving account money insufficient!");
         }
         else {
-            // update customer stocks
+            // update owner stocks
             if (stocks.containsKey(name)) {
                 stocks.get(name).buyShares(shares);
             } else {
@@ -61,7 +61,7 @@ public class SecurityAccount extends Account {
         // add money on saving account
         double amount = twoDecimal(shares *bank.getStocks().get(name).price);
         account.save(amount, currency, date);
-        // update customer stocks
+        // update owner stocks
         stocks.get(name).sellShares(shares);
         // update bank stocks
         bank.getStocks().get(name).buyShares(shares);

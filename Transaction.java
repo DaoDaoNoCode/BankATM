@@ -12,13 +12,13 @@ public class Transaction {
     private Currency currency;
     private TransactionType transactionType;
 
-    private Customer customer;
+    private String customer;
 
     private Account account;
 
     private double money;
 
-    public Transaction(double money, Currency currency, TransactionType transactionType, Customer customer, Account account) {
+    public Transaction(double money, Currency currency, TransactionType transactionType, String customer, Account account) {
         this.money = Account.twoDecimal(money);
         this.currency = currency;
         this.transactionType = transactionType;
@@ -27,7 +27,7 @@ public class Transaction {
         this.date = new Date();
     }
 
-    public Transaction(double money, Currency currency, TransactionType transactionType, Customer customer, Account account, Date date) {
+    public Transaction(double money, Currency currency, TransactionType transactionType, String customer, Account account, Date date) {
         this.money = Account.twoDecimal(money);
         this.currency = currency;
         this.transactionType = transactionType;
@@ -62,6 +62,6 @@ public class Transaction {
     }
 
     public String toString(Bank bank) {
-        return " " + getDateString() + " | " + this.money + " " + this.currency + " | " + this.transactionType + " | " + this.customer + " | " + this.account;
+        return " " + getDateString() + " | " + this.money + " " + this.currency + " | " + this.transactionType + " | Customer " + this.customer + " | " + this.account;
     }
 }

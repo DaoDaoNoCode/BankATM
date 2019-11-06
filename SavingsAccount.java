@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,8 +13,8 @@ public class SavingsAccount extends Account {
 
     private HashMap<Currency, Double> loanInterest;
 
-    public SavingsAccount(Bank bank, Customer customer, String password, Date date) {
-        super(bank, customer, password, date);
+    public SavingsAccount(Bank bank, String owner, String password, Date date) {
+        super(bank, owner, password, date);
         type = AccountType.SAVINGS;
         loan = new HashMap<>();
         for (Currency currency : Currency.values()) {
@@ -22,6 +23,23 @@ public class SavingsAccount extends Account {
         loanInterest = new HashMap<>();
         for (Currency currency : Currency.values()) {
             loanInterest.put(currency, 0.0);
+        }
+    }
+
+    public SavingsAccount(Bank bank, String accountNumber, String owner, String password, Double[] balance, Double[] loan, Double[] interest, Date date) {
+        super(bank, owner, password, date);
+        this.number = accountNumber;
+        type = AccountType.SAVINGS;
+        for (int i = 0; i < Currency.values().length; i++) {
+            this.deposit.put(Currency.values()[i], balance[i]);
+        }
+        this.loan = new HashMap<>();
+        for (int i = 0; i < Currency.values().length; i++) {
+            this.loan.put(Currency.values()[i], loan[i]);
+        }
+        this.loanInterest = new HashMap<>();
+        for (int i = 0; i < Currency.values().length; i++) {
+            this.loanInterest.put(Currency.values()[i], interest[i]);
         }
     }
 
@@ -52,7 +70,7 @@ public class SavingsAccount extends Account {
             double currentInterest = interestRateBig.multiply(moneyBig).doubleValue();
             loanInterest.put(currency, twoDecimal(currentInterest));
             deposit.put(currency, twoDecimal(money));
-            transactions.add(new Transaction(money, currency, TransactionType.LOAN, customer, this, date));
+            transactions.add(new Transaction(money, currency, TransactionType.LOAN, owner, this, date));
             return 1;
         }
     }
@@ -96,9 +114,9 @@ public class SavingsAccount extends Account {
                 loan.put(currency, 0.0);
                 loanInterest.put(currency, 0.0);
                 deposit.put(currency, twoDecimal(currentBalance - currentLoan - currentInterest));
-                transactions.add(new Transaction(-currentLoan, currency, TransactionType.LOAN_REPAY, customer, this, date));
-                transactions.add(new Transaction(-currentInterest, currency, TransactionType.LOAN_INTEREST, customer, this, date));
-                bank.addTransaction(new Transaction(currentInterest, currency, TransactionType.LOAN_INTEREST, customer, this, date));
+                transactions.add(new Transaction(-currentLoan, currency, TransactionType.LOAN_REPAY, owner, this, date));
+                transactions.add(new Transaction(-currentInterest, currency, TransactionType.LOAN_INTEREST, owner, this, date));
+                bank.addTransaction(new Transaction(currentInterest, currency, TransactionType.LOAN_INTEREST, owner, this, date));
                 return 1;
             }
         }
