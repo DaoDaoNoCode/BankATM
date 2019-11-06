@@ -4,7 +4,12 @@ import java.util.Date;
 public class SecurityAccount extends Account {
 
     private HashMap<String, Stock> stocks;
-
+    public SecurityAccount(Bank bank, String accountNumber, String owner, String password, Date date) {
+        super(bank, owner, password, date);
+        this.number = accountNumber;
+        type = AccountType.SECURITY;
+        stocks = new HashMap<>();
+    }
     public SecurityAccount(Bank bank, String owner, String password, Date date) {
         super(bank, owner, password, date);
         type = AccountType.SECURITY;
