@@ -98,12 +98,34 @@ public class Customer {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                System.out.println(balance.length);
                 SavingsAccount savingsAccount = new SavingsAccount(bank, account.get(0), account.get(1), account.get(2), balance, loan, interest, date);
                 if (account.get(13).equals("CLOSED")) {
                     closedAccounts.add(savingsAccount);
                 } else {
                     savingsAccounts.add(savingsAccount);
+                }
+            }
+        }
+        if (!Database.hasTable(checkingAccountTableName)) {
+            Database.createTable(checkingAccountTableName, checkingAccountCreateArgs);
+            Database.setPrimaryKey(checkingAccountTableName, accountPrimaryKey);
+        } else {
+            String[] queryIndex = {"OWNER"};
+            String[] queryValue = {username};
+            List<List<String>> accounts = Database.queryData(checkingAccountTableName, queryIndex, queryValue, checkingAccountArgs);
+            for (List<String> account : accounts) {
+                Double[] balance = {Double.valueOf(account.get(3)), Double.valueOf(account.get(4)), Double.valueOf(account.get(5))};
+                Date date = new Date();
+                try {
+                    date = formatter.parse(account.get(6));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                CheckingAccount checkingAccount = new CheckingAccount(bank, account.get(0), account.get(1), account.get(2), balance, date);
+                if (account.get(7).equals("CLOSED")) {
+                    closedAccounts.add(checkingAccount);
+                } else {
+                    checkingAccounts.add(checkingAccount);
                 }
             }
         }
@@ -114,6 +136,8 @@ public class Customer {
         if (type == AccountType.CHECKING) {
             account = new CheckingAccount(bank, username, password, date);
             checkingAccounts.add((CheckingAccount) account);
+            String[] values = {account.getNumber(), username, password, String.valueOf(0.0), String.valueOf(0.0), String.valueOf(0.0), getDateString(date), "ACTIVATE"};
+            Database.insertData(checkingAccountTableName, values);
             account.openAccount();
         } else if (type == AccountType.SAVINGS) {
             account = new SavingsAccount(bank, username, password, date);

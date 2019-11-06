@@ -12,6 +12,15 @@ public class CheckingAccount extends Account {
         type = AccountType.CHECKING;
     }
 
+    public CheckingAccount(Bank bank, String accountNumber, String owner, String password, Double[] balance, Date date) {
+        super(bank, owner, password, date);
+        this.number = accountNumber;
+        type = AccountType.CHECKING;
+        for (int i = 0; i < Currency.values().length; i++) {
+            this.deposit.put(Currency.values()[i], balance[i]);
+        }
+    }
+
     /**
      * Transfer to another checking account. The fee rate is 1%.
      * @param account account to transfer out
