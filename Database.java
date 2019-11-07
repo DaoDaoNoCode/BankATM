@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
-    private final static String driver ="com.mysql.jdbc.Driver";
+	private final static String driver ="com.mysql.jdbc.Driver";
     private final static String url ="jdbc:MySQL://localhost:3306/test?useSSL=false";
     private final static String user ="root";
     private final static String password ="123456";
@@ -192,5 +192,36 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    public static boolean hasDataRow(String tableName, String primaryKey, String primaryKeyValue) {
+    	boolean hasData = false;
+    	StringBuilder sbQuery = new StringBuilder();
+    	sbQuery.append("SELECT * FROM ");
+    	sbQuery.append(tableName);
+    	sbQuery.append(" WHERE ");
+    	sbQuery.append(primaryKey);
+    	sbQuery.append(" = ");
+    	sbQuery.append(primaryKeyValue);
+    	String querySql = sbQuery.toString();
+        System.out.println(querySql);
+        try {
+            Class.forName(driver);
+            Connection conn = DriverManager.getConnection(url, user, password);
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(querySql);
+            if (!resultSet.isBeforeFirst()) {
+            	hasData = true;
+            }
+            statement.close();
+            conn.close();
+        } catch (ClassNotFoundException e) {
+            System.out.println("Sorry, cannot find the Driver!");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return hasData;
     }
 }
