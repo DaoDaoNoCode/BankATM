@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;  
+import java.util.Date;  
 
 /**
  * This class is the whole bank, including all the information in the bank.
@@ -16,16 +19,25 @@ public class Bank {
     private HashMap<String, Stock> stocks;
 
     private final String customerTableName = "CUSTOMER";
+    
+    private final String bankerTransactionTableName = "BANKTRANSACTION";
 
     private final String[] customerCreateArgs = {"USERNAME varchar(20) not null", "PASSWORD varchar(20) not null"};
+    
+    private final String[] bankerTransactionCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "TYPE varchar(20) not null", 
+    		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null, ID char(12) not null"};
 
     private final String[] customerArgs = {"USERNAME", "PASSWORD"};
+    
+    private final String[] bankerTransactionArgs = {"ACCOUNT_NUMBER","TYPE", "MONEY", "CURRENCY", "DATE"};
 
     private final String customerPrimaryKey = "USERNAME";
+    
+    private final String bankerTransactionPrimaryKey = "ID";
 
     public Bank() {
         readCustomerFromDatabase();
-        bankerTransactions = new ArrayList<>();
+        readTransactionFromDatabase();
         stocks = new HashMap<>();
     }
 
@@ -35,13 +47,35 @@ public class Bank {
             Database.createTable(customerTableName, customerCreateArgs);
             Database.setPrimaryKey(customerTableName, customerPrimaryKey);
         } else {
-            List<List<String>> customers = Database.queryData(customerTableName, null, null, customerArgs);
+        	List<List<String>> customers = Database.queryData(customerTableName, null, null, customerArgs);
             for (List<String> customer : customers) {
                 this.customers.add(new Customer(this, customer.get(0), customer.get(1)));
             }
         }
     }
 
+    private void readTransactionFromDatabase() {
+        bankerTransactions = new ArrayList<>();
+        if (!Database.hasTable(bankerTransactionTableName)) {
+            Database.createTable(bankerTransactionTableName, bankerTransactionCreateArgs);
+            Database.setPrimaryKey(bankerTransactionTableName, bankerTransactionPrimaryKey);
+        } else {
+        	List<List<String>> transactions = Database.queryData(bankerTransactionTableName, null, null, bankerTransactionArgs);
+            for (List<String> transaction : transactions) {
+            	double money = Double.valueOf(transaction.get(2));
+            	SimpleDateFormat formatter=new SimpleDateFormat("MM-dd-yyyy"); 
+            	try {
+					Date date=formatter.parse(transaction.get(4));
+					this.bankerTransactions.add(new Transaction(money, Currency.valueOf(transaction.get(3)), 
+							TransactionType.valueOf(transaction.get(1)), transaction.get(0), date));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        }
+    }
+    
     public void registerCustomer(Customer customer) {
         customers.add(customer);
         String[] insertedData = new String[]{customer.getUsername(), customer.getPassword()};
@@ -58,6 +92,9 @@ public class Bank {
 
     public void addTransaction(Transaction transaction) {
         bankerTransactions.add(transaction);
+        String[] insertedData = new String[]{transaction.getAccount(), transaction.getTransactionType().toString(), 
+        		String.valueOf(transaction.getMoney()), transaction.getCurrency().toString(), transaction.getDateString(), transaction.getID()};
+        Database.insertData(bankerTransactionTableName, insertedData);
     }
 
     public void deleteCustomer(Customer customer) {
