@@ -42,11 +42,11 @@ public class CheckingAccount extends Account {
             return 0;
         } else {
             deposit.put(currency, twoDecimal(balance - money - transferFee));
-            transactions.add(new Transaction(-money, currency, TransactionType.TRANSFER_OUT, owner, this, date));
-            transactions.add(new Transaction(-transferFee, currency, TransactionType.TRANSFER_FEE, owner, this, date));
+            transactions.add(new Transaction(-money, currency, TransactionType.TRANSFER_OUT, owner, super.getNumber(), date));
+            transactions.add(new Transaction(-transferFee, currency, TransactionType.TRANSFER_FEE, owner, super.getNumber(), date));
             account.transferIn(money, currency);
-            account.addTransaction(new Transaction(money, currency, TransactionType.TRANSFER_IN, owner, this, date));
-            bank.addTransaction(new Transaction(transferFee, currency, TransactionType.TRANSFER_FEE, owner, this, date));
+            account.addTransaction(new Transaction(money, currency, TransactionType.TRANSFER_IN, owner, super.getNumber(), date));
+            bank.addTransaction(new Transaction(transferFee, currency, TransactionType.TRANSFER_FEE, owner, super.getNumber(), date));
             return 1;
         }
     }
