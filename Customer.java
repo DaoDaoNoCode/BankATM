@@ -74,6 +74,10 @@ public class Customer {
     public ArrayList<Account> getClosedAccounts() {
         return this.closedAccounts;
     }
+    
+    public void setPassword(String password) {
+    		this.password = password;
+    }
 
     private void readAccountsFromDatabase() {
         savingsAccounts = new ArrayList<>();

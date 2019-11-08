@@ -64,7 +64,7 @@ public class SavingsAccount extends Account {
         else if (money > 10000.0 || money <= 0.0) return 0;
         else {
             double balance = deposit.get(currency);
-            loan.put(currency, twoDecimal(money + balance));
+            loan.put(currency, twoDecimal(money));
             updateLoanInDatabase(currency);
 
             BigDecimal interestRateBig = BigDecimal.valueOf(0.001);
@@ -73,7 +73,7 @@ public class SavingsAccount extends Account {
             loanInterest.put(currency, twoDecimal(currentInterest));
             updateLoanInDatabase(currency);
 
-            deposit.put(currency, twoDecimal(money));
+            deposit.put(currency, twoDecimal(money + balance));
             updateDepositInDatabase(currency);
             transactions.add(new Transaction(money, currency, TransactionType.LOAN, owner, super.getNumber(), date));
             return 1;

@@ -7,6 +7,8 @@ import java.util.Date;
 public class Main {
     public static void main(String[] args) {
         Bank bank = new Bank();
-        new WelcomeInterface(bank, new Date());
+        //new WelcomeInterface(bank, new Date());
+        Initializer newGUI = new Initializer(bank);
+        newGUI.setLinks();
     }
 }
