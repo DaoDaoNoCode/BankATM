@@ -164,6 +164,27 @@ public class Account {
             return 1;
         }
     }
+    
+    protected void updateDepositInDatabase(Currency currency) {
+        String tableName;
+        if (this.type == AccountType.CHECKING) {
+            tableName = "CHECKING_ACCOUNT";
+        } else if (this.type == AccountType.SAVINGS) {
+            tableName = "SAVINGS_ACCOUNT";
+        } else {
+            tableName = "SECURITY_ACCOUNT";
+        }
+        String[] args;
+        if (currency == Currency.USD) {
+            args = new String[]{"USD_BALANCE"};
+        } else if (currency == Currency.EUR) {
+            args = new String[]{"EUR_BALANCE"};
+        } else {
+            args = new String[]{"CNY_BALANCE"};
+        }
+        String[] updateValues = {deposit.get(currency).toString()};
+        Database.updateData(tableName, "ACCOUNT_NUMBER", number, args, updateValues);
+    }
 
     /**
      * Give interest at a daily rate of 0.02% to those deposit no less than 1000.
