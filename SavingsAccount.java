@@ -27,8 +27,7 @@ public class SavingsAccount extends Account {
     }
 
     public SavingsAccount(Bank bank, String accountNumber, String owner, String password, Double[] balance, Double[] loan, Double[] interest, Date date) {
-        super(bank, owner, password, date);
-        this.number = accountNumber;
+        super(bank, owner, password, accountNumber, date);
         type = AccountType.SAVINGS;
         for (int i = 0; i < Currency.values().length; i++) {
             this.deposit.put(Currency.values()[i], balance[i]);

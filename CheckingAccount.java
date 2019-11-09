@@ -13,8 +13,8 @@ public class CheckingAccount extends Account {
     }
 
     public CheckingAccount(Bank bank, String accountNumber, String owner, String password, Double[] balance, Date date) {
-        super(bank, owner, password, date);
-        this.number = accountNumber;
+        super(bank, owner, password, accountNumber, date);
+        System.out.println(this.number);
         type = AccountType.CHECKING;
         for (int i = 0; i < Currency.values().length; i++) {
             this.deposit.put(Currency.values()[i], balance[i]);

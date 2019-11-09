@@ -37,6 +37,7 @@ public class Database {
         sbCreate.deleteCharAt(sbCreate.length() - 1); // delete the last comma
         sbCreate.append(")");
         String createTableSql = sbCreate.toString();
+        System.out.println(createTableSql);
         executeSQL(createTableSql);
     }
 

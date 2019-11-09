@@ -37,7 +37,10 @@ public class Transaction {
         this.account = account;
         this.generateIDNumber();
         this.date = date;
-        String dateStr = "mm-dd-yyyy";
+    }
+
+    public void insertTransactionIntoDatabase() {
+        String dateStr = "MM-dd-yyyy";
         DateFormat df = new SimpleDateFormat(dateStr);
         String[] insertedData = new String[]{account, customer, transactionType.toString(), Double.toString(money), currency.toString(), df.format(date), this.ID};
         Database.insertData(bankerTransactionTableName, insertedData);

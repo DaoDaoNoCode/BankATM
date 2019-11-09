@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,6 +103,7 @@ public class Customer {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                System.out.println(account.get(0));
                 SavingsAccount savingsAccount = new SavingsAccount(bank, account.get(0), account.get(1), account.get(2), balance, loan, interest, date);
                 if (account.get(13).equals("CLOSED")) {
                     closedAccounts.add(savingsAccount);

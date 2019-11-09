@@ -73,16 +73,19 @@ public class Bank {
         } else {
         	List<List<String>> transactions = Database.queryData(bankerTransactionTableName, null, null, bankerTransactionArgs);
             for (List<String> transaction : transactions) {
-            	double money = Double.valueOf(transaction.get(3));
-            	SimpleDateFormat formatter=new SimpleDateFormat("MM-dd-yyyy"); 
-            	try {
-					Date date=formatter.parse(transaction.get(5));
-					this.bankerTransactions.add(new Transaction(money, Currency.valueOf(transaction.get(4)),
-							TransactionType.valueOf(transaction.get(2)), transaction.get(1), transaction.get(0), date));
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                TransactionType type = TransactionType.valueOf(transaction.get(2));
+                if (type == TransactionType.BALANCE_REMAINED_WHEN_CLOSE || type == TransactionType.CLOSE_ACCOUNT_FEE || type == TransactionType.OPEN_ACCOUNT_FEE || type == TransactionType.SAVE_INTEREST || type == TransactionType.TRANSFER_FEE || type == TransactionType.LOAN_INTEREST || type == TransactionType.WITHDRAW_FEE) {
+                    double money = Double.valueOf(transaction.get(3));
+                    SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+                    try {
+                        Date date = formatter.parse(transaction.get(5));
+                        this.bankerTransactions.add(new Transaction(money, Currency.valueOf(transaction.get(4)),
+                                TransactionType.valueOf(transaction.get(2)), transaction.get(1), transaction.get(0), date));
+                    } catch (ParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -118,9 +121,6 @@ public class Bank {
 
     public void addTransaction(Transaction transaction) {
         bankerTransactions.add(transaction);
-        String[] insertedData = new String[]{transaction.getAccount(), transaction.getCustomer(), transaction.getTransactionType().toString(), 
-        		String.valueOf(transaction.getMoney()), transaction.getCurrency().toString(), transaction.getDateString(), transaction.getID()};
-        Database.insertData(bankerTransactionTableName, insertedData);
     }
 
     public void deleteCustomer(Customer customer) {
