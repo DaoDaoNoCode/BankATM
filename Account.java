@@ -132,10 +132,9 @@ public class Account {
             args = new String[]{"EUR_BALANCE"};	
         } else {	
             args = new String[]{"CNY_BALANCE"};	
-        }	
-        String[] updateValues = {deposit.get(currency).toString()};	
-        Database.updateData(tableName, "ACCOUNT_NUMBER", number, args, updateValues);	
-        transactions.add(new Transaction(money, currency, TransactionType.SAVE, owner, this.getNumber(), date));
+        }
+        String[] updateValues = {deposit.get(currency).toString()};
+        Database.updateData(tableName, "ACCOUNT_NUMBER", number, args, updateValues);
     }
 
     /**
@@ -164,7 +163,7 @@ public class Account {
             return 1;
         }
     }
-    
+
     protected void updateDepositInDatabase(Currency currency) {
         String tableName;
         if (this.type == AccountType.CHECKING) {
@@ -265,11 +264,12 @@ public class Account {
     			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
     			try {
     				date = sdf.parse(transaction.get(4));
+                    Transaction t = new Transaction(money, Currency.valueOf(transaction.get(3)), TransactionType.valueOf(transaction.get(1)), owner, transaction.get(0), date);
+                    this.transactions.add(t);
     			} catch (ParseException e) {
     				e.printStackTrace();
     			}
-    			Transaction t = new Transaction(money, Currency.valueOf(transaction.get(3)), TransactionType.valueOf(transaction.get(1)), transaction.get(0), date);
-    			this.transactions.add(t);
+
     		}
     		
     	}

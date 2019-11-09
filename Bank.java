@@ -1,3 +1,5 @@
+import org.omg.CORBA.DoubleHolder;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,25 +24,37 @@ public class Bank {
     
     private final String bankerTransactionTableName = "BANKTRANSACTION";
 
+    private final String stockTableName = "STOCK";
+
     private final String[] customerCreateArgs = {"USERNAME varchar(20) not null", "PASSWORD varchar(20) not null"};
     
     private final String[] bankerTransactionCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "TYPE varchar(20) not null", 
     		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null, ID char(12) not null"};
 
+    private final String[] stockCreateArgs = {"STOCK_NAME varchar(20) not null", "PRICE varchar(20) not null",
+            "SHARE varchar(20) not null"};
+
     private final String[] customerArgs = {"USERNAME", "PASSWORD"};
     
     private final String[] bankerTransactionArgs = {"ACCOUNT_NUMBER","TYPE", "MONEY", "CURRENCY", "DATE"};
+
+    private final String[] stockArgs = {"STOCK_NAME", "PRICE", "SHARE"};
 
     private final String customerPrimaryKey = "USERNAME";
     
     private final String bankerTransactionPrimaryKey = "ID";
 
+    private final String stockPrimaryKey = "STOCK_NAME";
+
     public Bank() {
         readCustomerFromDatabase();
         readTransactionFromDatabase();
-        stocks = new HashMap<>();
+        readStockFromDatabase();
     }
 
+    /**
+     * access to the database for the existing data
+     */
     private void readCustomerFromDatabase() {
         customers = new ArrayList<>();
         if (!Database.hasTable(customerTableName)) {
@@ -72,6 +86,21 @@ public class Bank {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+            }
+        }
+    }
+
+    private void readStockFromDatabase() {
+        stocks = new HashMap<>();
+        if (!Database.hasTable(stockTableName)) {
+            Database.createTable(stockTableName, stockCreateArgs);
+            Database.setPrimaryKey(stockTableName, stockPrimaryKey);
+        } else {
+            List<List<String>> stocks = Database.queryData(stockTableName, null, null, stockArgs);
+            for (List<String> stock: stocks) {
+                double price = Double.valueOf(stock.get(1));
+                int share = Integer.valueOf(stock.get(2));
+                this.stocks.put(stock.get(0), new Stock(stock.get(0),price, share));
             }
         }
     }
@@ -147,6 +176,9 @@ public class Bank {
 
     public void setStockPrice(String name, double price) {
         stocks.get(name).setPrice(price);
+        String[] updateArgs = {"PRICE"};
+        String[] updateValues = {Double.toString(price)};
+        Database.updateData(stockTableName, "STOCK_Name", name, updateArgs, updateValues);
     }
 
     public void deleteStock(String name) {
@@ -154,19 +186,33 @@ public class Bank {
             System.out.println("cannot delete a stock with positive shares");
         } 
         else {
+            // delete table
             stocks.remove(name);
+            Database.deleteData(stockTableName, stockPrimaryKey, stocks.get(name).getName());
         }
     }
 
     public void addNewStock(String name, double price, int shares) {
         Stock newStock = new Stock(name, price, shares);
         stocks.put(name, newStock);
+        if (!Database.hasDataRow(stockTableName, stockPrimaryKey, name)) {
+            String[] insertArgs = {name, Double.toString(price), Integer.toString(shares)};
+            Database.insertData(stockTableName, insertArgs);
+        } else {
+            System.out.println("This stock has already existed!");
+        }
     }
     public void addStockShare(String name, int shares) {
         stocks.get(name).buyShares(shares);
+        String[] updateArgs = {"SHARE"};
+        String[] updateValues = {"SHARE + " + shares};
+        Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
 
     public void reduceStockShare(String name, int shares) {
         stocks.get(name).sellShares(shares);
+        String[] updateArgs = {"SHARE"};
+        String[] updateValues = {"SHARE - " + shares};
+        Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
 }
