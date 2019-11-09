@@ -122,9 +122,13 @@ public class SavingsAccount extends Account {
                 updateLoanInDatabase(currency);
                 deposit.put(currency, twoDecimal(currentBalance - currentLoan - currentInterest));
                 updateLoanInDatabase(currency);
-                transactions.add(new Transaction(-currentLoan, currency, TransactionType.LOAN_REPAY, owner, super.getNumber(), date));
-                transactions.add(new Transaction(-currentInterest, currency, TransactionType.LOAN_INTEREST, owner, super.getNumber(), date));
-                bank.addTransaction(new Transaction(currentInterest, currency, TransactionType.LOAN_INTEREST, owner, super.getNumber(), date));
+                Transaction transaction1 = new Transaction(-currentLoan, currency, TransactionType.LOAN_REPAY, owner, super.getNumber(), date);
+                Transaction transaction2 = new Transaction(-currentInterest, currency, TransactionType.LOAN_INTEREST, owner, super.getNumber(), date);
+                transactions.add(transaction1);
+                transactions.add(transaction2);
+                bank.addTransaction(transaction2);
+                transaction1.insertTransactionIntoDatabase();
+                transaction2.insertTransactionIntoDatabase();
                 return 1;
             }
         }
