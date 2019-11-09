@@ -74,7 +74,9 @@ public class SavingsAccount extends Account {
 
             deposit.put(currency, twoDecimal(money + balance));
             updateDepositInDatabase(currency);
-            transactions.add(new Transaction(money, currency, TransactionType.LOAN, owner, super.getNumber(), date));
+            Transaction transaction = new Transaction(money, currency, TransactionType.LOAN, owner, super.getNumber(), date);
+            transactions.add(transaction);
+            transaction.insertTransactionIntoDatabase();
             return 1;
         }
     }
