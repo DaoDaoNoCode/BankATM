@@ -17,7 +17,7 @@ public class Transaction {
 
     private TransactionType transactionType;
     
-    private final String bankerTransactionTableName = "BANKTRANSACTION";
+    private final String bankerTransactionTableName = "BANK_TRANSACTION";
     
     private final String bankerTransactionPrimaryKey = "ID";
 
@@ -28,19 +28,6 @@ public class Transaction {
     private String ID;
 
     private double money;
-    
-    public Transaction(double money, Currency currency, TransactionType transactionType, String account, Date date) {
-        this.money = Account.twoDecimal(money);
-        this.currency = currency;
-        this.transactionType = transactionType;
-        this.account = account;
-        this.generateIDNumber();
-    	this.date = date;
-        String dateStr = "mm-dd-yyyy";
-        DateFormat df = new SimpleDateFormat(dateStr);
-        String[] insertedData = new String[]{account, transactionType.toString(), Double.toString(money), currency.toString(), df.format(date), this.ID};
-        Database.insertData(bankerTransactionTableName, insertedData);
-    }
 
     public Transaction(double money, Currency currency, TransactionType transactionType, String customer, String account, Date date) {
         this.money = Account.twoDecimal(money);

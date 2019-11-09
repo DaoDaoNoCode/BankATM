@@ -22,13 +22,13 @@ public class Bank {
 
     private final String customerTableName = "CUSTOMER";
     
-    private final String bankerTransactionTableName = "BANKTRANSACTION";
+    private final String bankerTransactionTableName = "BANK_TRANSACTION";
 
     private final String stockTableName = "STOCK";
 
     private final String[] customerCreateArgs = {"USERNAME varchar(20) not null", "PASSWORD varchar(20) not null"};
     
-    private final String[] bankerTransactionCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "TYPE varchar(20) not null", 
+    private final String[] bankerTransactionCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "CUSTOMER varchar(20) not null", "TYPE varchar(20) not null",
     		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null, ID char(12) not null"};
 
     private final String[] stockCreateArgs = {"STOCK_NAME varchar(20) not null", "PRICE varchar(20) not null",
@@ -36,7 +36,7 @@ public class Bank {
 
     private final String[] customerArgs = {"USERNAME", "PASSWORD"};
     
-    private final String[] bankerTransactionArgs = {"ACCOUNT_NUMBER","TYPE", "MONEY", "CURRENCY", "DATE"};
+    private final String[] bankerTransactionArgs = {"ACCOUNT_NUMBER", "CUSTOMER", "TYPE", "MONEY", "CURRENCY", "DATE", "ID"};
 
     private final String[] stockArgs = {"STOCK_NAME", "PRICE", "SHARE"};
 
@@ -76,12 +76,12 @@ public class Bank {
         } else {
         	List<List<String>> transactions = Database.queryData(bankerTransactionTableName, null, null, bankerTransactionArgs);
             for (List<String> transaction : transactions) {
-            	double money = Double.valueOf(transaction.get(2));
+            	double money = Double.valueOf(transaction.get(3));
             	SimpleDateFormat formatter=new SimpleDateFormat("MM-dd-yyyy"); 
             	try {
-					Date date=formatter.parse(transaction.get(4));
-					this.bankerTransactions.add(new Transaction(money, Currency.valueOf(transaction.get(3)), 
-							TransactionType.valueOf(transaction.get(1)), transaction.get(0), date));
+					Date date=formatter.parse(transaction.get(5));
+					this.bankerTransactions.add(new Transaction(money, Currency.valueOf(transaction.get(4)),
+							TransactionType.valueOf(transaction.get(2)), transaction.get(1), transaction.get(0), date));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -178,7 +178,7 @@ public class Bank {
         stocks.get(name).setPrice(price);
         String[] updateArgs = {"PRICE"};
         String[] updateValues = {Double.toString(price)};
-        Database.updateData(stockTableName, "STOCK_Name", name, updateArgs, updateValues);
+        Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
 
     public void deleteStock(String name) {
