@@ -1,12 +1,9 @@
-import org.omg.CORBA.DoubleHolder;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;  
-import java.util.Date;  
+import java.text.SimpleDateFormat;
 
 /**
  * This class is the whole bank, including all the information in the bank.
@@ -121,7 +118,7 @@ public class Bank {
 
     public void addTransaction(Transaction transaction) {
         bankerTransactions.add(transaction);
-        String[] insertedData = new String[]{transaction.getAccount(), transaction.getTransactionType().toString(), 
+        String[] insertedData = new String[]{transaction.getAccount(), transaction.getCustomer(), transaction.getTransactionType().toString(), 
         		String.valueOf(transaction.getMoney()), transaction.getCurrency().toString(), transaction.getDateString(), transaction.getID()};
         Database.insertData(bankerTransactionTableName, insertedData);
     }

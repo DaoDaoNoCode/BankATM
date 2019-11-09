@@ -9,11 +9,13 @@ public class Initializer {
 	PWPanel newWelcome;
 	PWPanel newChecking;
 	PWPanel newSavings;
+	PWPanel newSecurity;
 	
 	MainPanel newMain;
 	MainPanel newOpenopt;
 	MainPanel newSelect;
 	MainPanel newView;
+	MainPanel newViewSecurity;
 	MainPanel newWithdraw;
 	MainPanel newDeposit;
 	MainPanel newTransfer;
@@ -35,11 +37,13 @@ public class Initializer {
 		newWelcome = new PWPanel("welcome", newFrame, newBank, newDate);
 		newChecking = new PWPanel("checking", newFrame, newBank, newDate);
 		newSavings = new PWPanel("savings", newFrame, newBank, newDate);
+		newSecurity = new PWPanel("security", newFrame, newBank, newDate);
 		
 		newMain = new MainPanel("main", newFrame, newBank, newDate);
 		newOpenopt = new MainPanel("openopt", newFrame, newBank, newDate);
 		newSelect = new MainPanel("select", newFrame, newBank, newDate);
 		newView = new MainPanel("view", newFrame, newBank, newDate);
+		newViewSecurity = new MainPanel("security", newFrame, newBank, newDate);
 		newWithdraw = new MainPanel("withdraw", newFrame, newBank, newDate);
 		newDeposit = new MainPanel("deposit", newFrame, newBank, newDate);
 		newTransfer = new MainPanel("transfer", newFrame, newBank, newDate);
@@ -85,15 +89,19 @@ public class Initializer {
 		newMain.setLinkButton(newLoans, 3);
 		newOpenopt.setLinkButton(newChecking, 0);
 		newOpenopt.setLinkButton(newSavings, 1);
-		newOpenopt.setLinkButton(newOpenopt, 2);
+		newOpenopt.setLinkButton(newSecurity, 2);
 		//newOpenopt.setLinkButton(newSecurity, 2);
 		newOpenopt.setBack(newMain);
 		newChecking.setFore(newMain);
 		newChecking.setBack(newOpenopt);
 		newSavings.setFore(newMain);
 		newSavings.setBack(newOpenopt);
+		newSecurity.setFore(newMain);
+		newSecurity.setBack(newOpenopt);
 		newSelect.setBack(newMain);
 		newSelect.setFore(newView);
+		newSelect.setLink(newViewSecurity);
+		newViewSecurity.setBack(newView);
 		newView.setBack(newMain);
 		newView.setLinkButton(newWithdraw, 0);
 		newView.setLinkButton(newDeposit, 1);

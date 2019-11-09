@@ -71,7 +71,7 @@ public class MainPanel extends AtmPanel{
 		}
 		case "openopt":{
 			setTitle("Select a Type of Account");
-			String[] names = {"Checking", "Savings", "Securiry"};
+			String[] names = {"Checking", "Savings", "Security"};
 			int[] sizes = {20, 20, 20};
 			showName();
 			setButtons(names, sizes, 3);
@@ -115,12 +115,13 @@ public class MainPanel extends AtmPanel{
 			showBalance();
 			break;
 		}
-		case "security":{
+		case "security":{//view security
 			String[] names = {"Buy Stocks", "Sell stocks", "Cloce Account"};
 			int[] sizes = {17, 17, 17};
 			buttonNum = 3;
-			buttons[2].setBackground(Color.gray);
 			setButtons(names, sizes, 3);
+			buttons[2].setBackground(Color.gray);
+			showBalance();
 			break;
 		}
 		case "buystock":{
@@ -183,7 +184,7 @@ public class MainPanel extends AtmPanel{
 			break;
 		}
 		case "manager":{
-			String[] names = {"Add 1 Day", "Add 3 Days", "Transactions", "Daily Report"};
+			String[] names = {"Add 1 Day", "Add 3 Days", "Daily Report", "View Customers"};
 			int[] sizes = {17, 17, 15, 15};
 			setButtons(names, sizes, 4);
 			buttonNum = 4;
@@ -411,6 +412,9 @@ public class MainPanel extends AtmPanel{
             for (Account account : customer.getSavingsAccounts()) {
                 accounts.addItem(account);
             }
+        }
+        if (panelName.equals("select") && customer.getSecurityAccounts()!=null) {
+        		accounts.addItem(customer.getSecurityAccounts());
         }
 	}
 	private void resetTransfer() {
@@ -690,6 +694,12 @@ public class MainPanel extends AtmPanel{
         			closeAccount();
         			super.backward();
         		}
+    			else if (panelName.equals("openopt")&&(n==2) 
+    					&& customer.getSecurityAccounts()!=null) {
+    	            JOptionPane.showMessageDialog(null,
+    	            		"Your can only have one security account!", 
+    	            		"Request Failed", JOptionPane.ERROR_MESSAGE);
+    			}
     			else {
     				buttonLinks[n].setDate(date);
     				buttonLinks[n].setCustomer(customer);
@@ -740,7 +750,7 @@ public class MainPanel extends AtmPanel{
 				||panelName.equals("inquiry")||panelName.equals("view"))
     			resetBalance();
     		else if (panelName.equals("manager")||panelName.equals("daily")
-    				||panelName.equals("accounts"))
+    				||panelName.equals("accounts")||panelName.equals("security"))
     			resetEarned();
     		if (panelName.equals("transfer"))
     			resetTransfer();

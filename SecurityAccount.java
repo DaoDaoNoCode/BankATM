@@ -58,7 +58,7 @@ public class SecurityAccount extends Account {
     }
 
     /* 
-        UI ¸ø³öÏÂÀ­Ñ¡Ïî: 
+        UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½: 
         currency, saving account, 
         Stockname, shares
     */                
@@ -132,5 +132,9 @@ public class SecurityAccount extends Account {
         String[] updateStockValues = {name};
         Database.updateData(stockTableName, "SHARE",
                 "SHARE + " + shares, updateStockArgs, updateStockValues);
+    }
+    
+    public String toString() {
+    		return type.toString();
     }
 }

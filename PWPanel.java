@@ -119,7 +119,7 @@ public class PWPanel extends AtmPanel{
 	        JLabel jLabelHint1 = new JLabel("Accounts will be charged a fee of withdrawal every time.");
 	        JLabel jLabelHint2 = new JLabel("(0.05% for withdrawal less than 1000, ");
 	        JLabel jLabelHint3 = new JLabel("0.1% for withdrawal equals to or more than 1000)");
-	        JLabel jLabelHint4 = new JLabel("Deposits no less than 1000 will get a 0.02% daily save interest.");
+	        JLabel jLabelHint4 = new JLabel("Savings deposits no less than 1000 can get 0.02% daily interests.");
 	        jLabelHint1.setBounds(160, 110, 600, 60);
 	        jLabelHint2.setBounds(230, 150, 600, 60);
 	        jLabelHint3.setBounds(200, 175, 600, 60);
@@ -158,6 +158,40 @@ public class PWPanel extends AtmPanel{
 	        jLabelHint2.setBounds(230, 150, 600, 60);
 	        jLabelHint3.setBounds(200, 175, 600, 60);
 	        jLabelHint4.setBounds(130, 215, 700, 60);
+	        jLabelHint1.setForeground(Color.gray);
+	        jLabelHint2.setForeground(Color.gray);
+	        jLabelHint3.setForeground(Color.gray);
+	        jLabelHint4.setForeground(Color.gray);
+	        jLabelHint1.setFont(new Font("calibri",Font.CENTER_BASELINE, 17));
+	        jLabelHint2.setFont(new Font("calibri",Font.CENTER_BASELINE, 17));
+	        jLabelHint3.setFont(new Font("calibri",Font.CENTER_BASELINE, 17));
+	        jLabelHint4.setFont(new Font("calibri",Font.CENTER_BASELINE, 17));
+			add(pwField);
+			add(confField);
+			add(next);
+			add(jLabelHint1);
+			add(jLabelHint2);
+			add(jLabelHint3);
+			add(jLabelHint4);
+			next.addActionListener(newListener);
+			break;
+		}
+		case "security":{
+			welcome = new JLabel("New Security Account");
+			welcome.setFont(new Font("calibri",Font.BOLD, 27));
+			next = new NextButton("Open");
+			welcome.setBounds(260, 20, 400, 100);
+			pwField.setBounds(260, 290, 280, 50);
+			confField.setBounds(260, 360, 280, 50);
+			next.setBounds(410, 440, 125, 60);
+	        JLabel jLabelHint1 = new JLabel("If you have a savings deposit of more than 1000, ");
+	        JLabel jLabelHint2 = new JLabel("you can open a security account");
+	        JLabel jLabelHint3 = new JLabel("You can buy and sell stocks with this account");
+	        JLabel jLabelHint4 = new JLabel("One user can only open one security account");
+	        jLabelHint1.setBounds(190, 110, 600, 60);
+	        jLabelHint2.setBounds(260, 135, 600, 60);
+	        jLabelHint3.setBounds(200, 175, 600, 60);
+	        jLabelHint4.setBounds(200, 215, 600, 60);
 	        jLabelHint1.setForeground(Color.gray);
 	        jLabelHint2.setForeground(Color.gray);
 	        jLabelHint3.setForeground(Color.gray);
@@ -226,7 +260,7 @@ public class PWPanel extends AtmPanel{
 	        String password = pwField.getPW();
 	        String confirm = confField.getPW();
 	        boolean nameIsUsed = false;
-	        if (username.length() == 0 || password.length() == 0 || confirm.length() == 0) {
+	        if (username.length() == 0 || pwField.blank() || confField.blank()) {
 	            JOptionPane.showMessageDialog(null, 
 	            		"Username or password cannot be empty!", "Request Failed", JOptionPane.ERROR_MESSAGE);
 	        } else {
@@ -254,7 +288,7 @@ public class PWPanel extends AtmPanel{
 		case "checking":{
 	        String password = pwField.getPW();
 	        String confirm = confField.getPW();
-	        if (password.length() == 0 || confirm.length() == 0) {
+	        if (pwField.blank() || confField.blank()) {
 	            JOptionPane.showMessageDialog(null, 
 	            		"Password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
 	        }else {
@@ -275,7 +309,7 @@ public class PWPanel extends AtmPanel{
 		case "savings":{
 	        String password = pwField.getPW();
 	        String confirm = confField.getPW();
-	        if (password.length() == 0 || confirm.length() == 0) {
+	        if (pwField.blank() || confField.blank()) {
 	            JOptionPane.showMessageDialog(null, 
 	            		"Password cannot be empty!", "Request Failed", JOptionPane.ERROR_MESSAGE);
 	        }else {
@@ -287,6 +321,27 @@ public class PWPanel extends AtmPanel{
                 			Account account = customer.openAccount(AccountType.SAVINGS, password, date);
                 			JOptionPane.showMessageDialog(null, 
                 					"Open savings account!\nNumber is: " + account.getNumber(), "Open account success", JOptionPane.INFORMATION_MESSAGE);
+                			super.forward();
+                    }
+                }
+            }
+			break;
+		}
+		case "security":{
+	        String password = pwField.getPW();
+	        String confirm = confField.getPW();
+	        if (pwField.blank() || confField.blank()) {
+	            JOptionPane.showMessageDialog(null, 
+	            		"Password cannot be empty!", "Request Failed", JOptionPane.ERROR_MESSAGE);
+	        }else {
+                if (!password.equals(confirm)) {
+                    JOptionPane.showMessageDialog(null, "Please repeat with the same password!", "Request Failed", JOptionPane.ERROR_MESSAGE);
+                } else {
+                		int response = JOptionPane.showConfirmDialog(null, "You need to pay 5 USD to open an account, do you want to open it？", "Open account", 0);
+                		if (response == JOptionPane.YES_OPTION) {
+                			customer.openAccount(AccountType.SECURITY, password, date);
+                			JOptionPane.showMessageDialog(null, 
+                					"Open security account!\nYou can now deal with stocks!", "Open account success", JOptionPane.INFORMATION_MESSAGE);
                 			super.forward();
                     }
                 }

@@ -13,7 +13,7 @@ public class Account {
 
     private static final double ACCOUNT_OPEN_CLOSE_FEE = 5.0;
     
-    private final String bankerTransactionTableName = "BANKTRANSACTION";
+    private final String bankerTransactionTableName = "BANK_TRANSACTION";
     
     private final String[] bankerTransactionCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "TYPE varchar(20) not null", 
     		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null, ID char(12) not null"};

@@ -80,7 +80,7 @@ public class StartPanel extends PWPanel{
     public void forward() {
     		String username = idField.getText();
     		String password = pwField.getPW();
-    		if (username.length() == 0 || password.length() == 0) {
+    		if (username.length() == 0 || pwField.blank()) {
     			JOptionPane.showMessageDialog(null, 
     					"Username or password cannot be empty!", 
     					"Request Failed", JOptionPane.ERROR_MESSAGE);
