@@ -115,6 +115,20 @@ public class MainPanel extends AtmPanel{
 			showBalance();
 			break;
 		}
+		case "security":{
+			String[] names = {"Buy Stocks", "Sell stocks", "Cloce Account"};
+			int[] sizes = {17, 17, 17};
+			buttonNum = 3;
+			buttons[2].setBackground(Color.gray);
+			setButtons(names, sizes, 3);
+			break;
+		}
+		case "buystock":{
+			break;
+		}
+		case "sellstock":{
+			break;
+		}
 		case "transfer":{//adjust later
 			textAndBox("Transfer from");
 			label2 = new JLabel("To Account");
@@ -213,7 +227,7 @@ public class MainPanel extends AtmPanel{
 		}
 	}
 	//show components&info
-	public void setTitle(String s) {
+	private void setTitle(String s) {
 		if (title!=null)
 			remove(title);
 		title = new JLabel(s);
@@ -222,7 +236,7 @@ public class MainPanel extends AtmPanel{
 		title.setFocusable(false);
 		add(title);
 	}
-	public void showBalance() {
+	private void showBalance() {
 		name = new JLabel("#");
 		balance = new JLabel[3];
 		balance[0] = new JLabel("#");
@@ -269,7 +283,7 @@ public class MainPanel extends AtmPanel{
 		bg.add(balance[1]);
 		bg.add(balance[2]);
 	}
-	public void showName() {
+	private void showName() {
 		JLabel welcome = new JLabel("Hello!");
 		name = new JLabel("#");
 		welcome.setBounds(30, 110, 200, 100);
@@ -283,7 +297,7 @@ public class MainPanel extends AtmPanel{
 		bg.add(welcome);
 		bg.add(name);
 	}
-	public void showTransactions() {
+	private void showTransactions() {
 		record.setBounds(245, 145, 475, 340);
 		record.setBackground(Color.decode("#F7F7F7"));
 		record.setFocusable(false);
@@ -291,7 +305,7 @@ public class MainPanel extends AtmPanel{
         jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(jsp);
 	}
-	public void setButtons(String[] words, int[] sizes, int num) {
+	private void setButtons(String[] words, int[] sizes, int num) {
 		buttons = new AtmButton[num];
 		buttonLinks = new AtmPanel[num];
 		for (int i=0; i<num; i++) {
@@ -302,7 +316,7 @@ public class MainPanel extends AtmPanel{
 			buttons[i].addActionListener(newListener);
 		}
 	}
-	public void textAndBox(String line) {
+	private void textAndBox(String line) {
 		label1 = new JLabel(line);
 		label1.setFont(new Font("calibri",Font.BOLD, 20));
 		label1.setBounds(260, 130, 300, 100);
@@ -311,7 +325,7 @@ public class MainPanel extends AtmPanel{
 		add(label1);
 		add(accounts);
 	}
-	public void setRadio(String text1, String text2) {
+	private void setRadio(String text1, String text2) {
 		radio1 = new JRadioButton(text1);
 		radio2 = new JRadioButton(text2);
 		radio1.setBounds(240, 75, 200, 100);
@@ -337,7 +351,7 @@ public class MainPanel extends AtmPanel{
 		add(radio2);
 	}
 	//reset functions
-	public void resetTransactions() {
+	private void resetTransactions() {
 		record.setText("");
         ArrayList<Transaction> transactions = account.getTransactions();
         transactions.sort(new Comparator<Transaction>() {
@@ -351,7 +365,7 @@ public class MainPanel extends AtmPanel{
             record.append("\n");
         }
     }
-	public void resetDaily() {
+	private void resetDaily() {
 		record.setText("");
 		ArrayList<Transaction> transactions = bank.getBankerTransactions();
 		transactions.sort(new Comparator<Transaction>() {
@@ -365,7 +379,7 @@ public class MainPanel extends AtmPanel{
 			record.append("\n");
 	 	}
 	}
-	public void resetEarned() {
+	private void resetEarned() {
 		name.setText("Total Earned");
         HashMap<Currency, Double> moneyEarned = bank.calculateMoneyEarned();
         int i = 0;
@@ -374,7 +388,7 @@ public class MainPanel extends AtmPanel{
         		i++;
         }
 	}
-	public void resetBalance() {
+	private void resetBalance() {
 		resetName();
 		int i = 0;
         for (Currency currency : Currency.values()) {
@@ -383,10 +397,10 @@ public class MainPanel extends AtmPanel{
         }
         setTitle(account.getType().toString()+" - ●●●●"+account.getNumber().substring(8));
 	}
-	public void resetName() {
+	private void resetName() {
 		name.setText(customer.getUsername());
 	}
-	public void resetSelect() {
+	private void resetSelect() {
 		accounts.removeAllItems();
         if (customer.getCheckingAccounts().size() != 0) {
             for (Account account : customer.getCheckingAccounts()) {
@@ -399,7 +413,7 @@ public class MainPanel extends AtmPanel{
             }
         }
 	}
-	public void resetTransfer() {
+	private void resetTransfer() {
 		accounts.removeAllItems();
 		customers.removeAllItems();
 		model.removeAllElements();
@@ -428,7 +442,7 @@ public class MainPanel extends AtmPanel{
         }
 		updateToAccounts((Customer) customers.getSelectedItem());
 	}
-	public void resetAccounts() {
+	private void resetAccounts() {
 		customers.removeAllItems();
 		if (bank.getCustomers().size() != 0) {
 			if (radio1.isSelected()) {
@@ -489,7 +503,7 @@ public class MainPanel extends AtmPanel{
             }
         }
     }
-    public void transactions() {
+	private void transactions() {
 		JTextField jTextFieldMoney = new JTextField(10);
 		JPasswordField jPasswordFieldPassword = new JPasswordField(10);
 		JComboBox<Currency> jComboBoxCurrency = new JComboBox<>();
@@ -522,31 +536,39 @@ public class MainPanel extends AtmPanel{
 				else if (password.length()==0) {
 					noPWMsg();
 				}
-				else if (!account.isPasswordRight(password)) 
-    					wrongPWMsg();
 				else {
             			switch(panelName) {
             			case "deposit":{
-            				double money = Double.valueOf(jTextFieldMoney.getText());
-            				account.save(money, currency, date);
-            				JOptionPane.showMessageDialog(null,
-            						"Save Money Finished!", 
-            						"Save money success", JOptionPane.INFORMATION_MESSAGE);
+            				if (!account.isPasswordRight(password)) {
+            					wrongPWMsg();
+            				}
+            				else {
+            					double money = Double.valueOf(jTextFieldMoney.getText());
+                				account.save(money, currency, date);
+                				JOptionPane.showMessageDialog(null,
+                						"Save Money Finished!", 
+                						"Save money success", JOptionPane.INFORMATION_MESSAGE);
+            				}
             				break;
             			}
             			case "withdraw":{
-           				double money = Double.valueOf(jTextFieldMoney.getText());
-        					int withdraw = account.withdraw(money, currency, date);
-        					if (withdraw == -1) {
-         					JOptionPane.showMessageDialog(null,
-          							"Withdrawal must be more than 0!", 
-           							"Request Failed", JOptionPane.ERROR_MESSAGE);
-            				} else if (withdraw == 0) {
-            					noMoneyMsg();
-            				} else {
-            					JOptionPane.showMessageDialog(null, 
-            							"Withdraw Money Finished!", 
-            							"Withdraw money success", JOptionPane.INFORMATION_MESSAGE);
+            				if (!account.isPasswordRight(password)) {
+            					wrongPWMsg();
+            				}
+            				else {
+                   			double money = Double.valueOf(jTextFieldMoney.getText());
+            					int withdraw = account.withdraw(money, currency, date);
+            					if (withdraw == -1) {
+             					JOptionPane.showMessageDialog(null,
+              							"Withdrawal must be more than 0!", 
+               							"Request Failed", JOptionPane.ERROR_MESSAGE);
+                				} else if (withdraw == 0) {
+                					noMoneyMsg();
+                				} else {
+                					JOptionPane.showMessageDialog(null, 
+                							"Withdraw Money Finished!", 
+                							"Withdraw money success", JOptionPane.INFORMATION_MESSAGE);
+                				}
             				}
         					break;
             			}
@@ -554,52 +576,62 @@ public class MainPanel extends AtmPanel{
             				double money = Double.valueOf(jTextFieldMoney.getText());
             				CheckingAccount accountFrom = (CheckingAccount) accounts.getSelectedItem();
             				CheckingAccount accountTo = (CheckingAccount) extraAccounts.getSelectedItem();
-            				int transfer = accountFrom.transferOut(accountTo, money, currency, date);
-            				if (transfer == -1) {
-            					JOptionPane.showMessageDialog(null, 
-            							"Transfer must be more than 0!",
-            							"Request Failed", JOptionPane.ERROR_MESSAGE);
-            				} else if (transfer == 0) {
-            					noMoneyMsg();
-            				} else {
-            					JOptionPane.showMessageDialog(null, 
-            							"Transfer Money Finished!", 
-            							"Transfer money success", JOptionPane.INFORMATION_MESSAGE);
+            				if (!accountFrom.isPasswordRight(password)) {
+            					wrongPWMsg();
+            				}
+            				else {
+                				int transfer = accountFrom.transferOut(accountTo, money, currency, date);
+                				if (transfer == -1) {
+                					JOptionPane.showMessageDialog(null, 
+                							"Transfer amount must be more than 0!",
+                							"Request Failed", JOptionPane.ERROR_MESSAGE);
+                				} else if (transfer == 0) {
+                					noMoneyMsg();
+                				} else {
+                					JOptionPane.showMessageDialog(null, 
+                							"Transfer Money Finished!", 
+                							"Transfer money success", JOptionPane.INFORMATION_MESSAGE);
+                				}
             				}
             				break;
             			}
             			case "loans":{
             				SavingsAccount savings = (SavingsAccount) accounts.getSelectedItem();
-            				if (radio1.isSelected()){
-            					double money = Double.valueOf(jTextFieldMoney.getText());
-            					int loan = savings.requestLoan(money, currency, date);
-            					if (loan == -1) {
-            						JOptionPane.showMessageDialog(null, 
-            								"You need to repay your loan first!", 
-            								"Request Failed", JOptionPane.ERROR_MESSAGE);
-            					} else if (loan == 0) {
-            						JOptionPane.showMessageDialog(null, 
-            								"Loan must be between 0-10000!", 
-            								"Request Failed", JOptionPane.ERROR_MESSAGE);
-            					} else {
-            						JOptionPane.showMessageDialog(null, 
-            								"Loan Finished!", 
-            								"Loan success", JOptionPane.INFORMATION_MESSAGE);
-            					}
+            				if (!savings.isPasswordRight(password)) {
+            					wrongPWMsg();
             				}
             				else {
-            					int repay = savings.repayLoan(currency, date);
-            					if (repay == -1) {
-            						JOptionPane.showMessageDialog(null, 
-            								"You have no loan to repay!", 
-            								"Request Failed", JOptionPane.ERROR_MESSAGE);
-            					} else if (repay == 0) {
-            						noMoneyMsg();
-            					} else {
-            						JOptionPane.showMessageDialog(null, 
-            								"Repay Finished!",
-            								"Repay success", JOptionPane.INFORMATION_MESSAGE);
-            					}
+            					if (radio1.isSelected()){
+                					double money = Double.valueOf(jTextFieldMoney.getText());
+                					int loan = savings.requestLoan(money, currency, date);
+                					if (loan == -1) {
+                						JOptionPane.showMessageDialog(null, 
+                								"You need to repay your loan first!", 
+                								"Request Failed", JOptionPane.ERROR_MESSAGE);
+                					} else if (loan == 0) {
+                						JOptionPane.showMessageDialog(null, 
+                								"Loan must be between 0-10000!", 
+                								"Request Failed", JOptionPane.ERROR_MESSAGE);
+                					} else {
+                						JOptionPane.showMessageDialog(null, 
+                								"Loan Finished!", 
+                								"Loan success", JOptionPane.INFORMATION_MESSAGE);
+                					}
+                				}
+                				else {
+                					int repay = savings.repayLoan(currency, date);
+                					if (repay == -1) {
+                						JOptionPane.showMessageDialog(null, 
+                								"You have no loan to repay!", 
+                								"Request Failed", JOptionPane.ERROR_MESSAGE);
+                					} else if (repay == 0) {
+                						noMoneyMsg();
+                					} else {
+                						JOptionPane.showMessageDialog(null, 
+                								"Repay Finished!",
+                								"Repay success", JOptionPane.INFORMATION_MESSAGE);
+                					}
+                				}
             				}
             				break;
             			}
@@ -611,7 +643,7 @@ public class MainPanel extends AtmPanel{
 			}
     		}
     }
-    public boolean quickVerify(boolean isSave) {//verify password
+    private boolean quickVerify(boolean isSave) {//verify password
     		JPasswordField jPasswordFieldPassword = new JPasswordField(15);
     		JPanel jPanel = new JPanel();
     		jPanel.add(new JLabel("Password: "));
@@ -789,7 +821,7 @@ public class MainPanel extends AtmPanel{
     		else
     			super.forward();
     }
-    public void closeAccount() {
+    private void closeAccount() {
         int response = JOptionPane.showConfirmDialog(null, "You need to pay 5 USD to close this account, do you want to close it？(We will not return the remaining balances.)", "Close account", 0);
         if (response == JOptionPane.YES_OPTION) {
             customer.closeAccount(account, date);
@@ -799,32 +831,32 @@ public class MainPanel extends AtmPanel{
             super.backward();
         }
     }
-    public void noAccountMsg() {
+    private void noAccountMsg() {
 		JOptionPane.showMessageDialog(null,
 				"Please select an account."
 				,"Request Failed", JOptionPane.ERROR_MESSAGE); 
     }
-    public void requestFailMsg() {
+    private void requestFailMsg() {
     		JOptionPane.showMessageDialog(null,
 				"Invalid request.",
 				"Request Failed", JOptionPane.ERROR_MESSAGE);
     }
-    public void wrongPWMsg() {
+    private void wrongPWMsg() {
     		JOptionPane.showMessageDialog(null, 
 				"Wrong password!", 
 				"Request Failed", JOptionPane.ERROR_MESSAGE);
     }
-    public void noInputMsg() {
+    private void noInputMsg() {
     		JOptionPane.showMessageDialog(null,
 				"Please input an amount!", 
 				"Request Failed", JOptionPane.ERROR_MESSAGE);
     }
-    public void noPWMsg() {
+    private void noPWMsg() {
     		JOptionPane.showMessageDialog(null,
 				"Please input password!", 
 				"Request Failed", JOptionPane.ERROR_MESSAGE);
     }
-    public void noMoneyMsg() {
+    private void noMoneyMsg() {
     		JOptionPane.showMessageDialog(null, 
 				"No enough money!", 
 				"Request Failed", JOptionPane.ERROR_MESSAGE);
