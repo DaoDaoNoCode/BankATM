@@ -51,7 +51,10 @@ public class Customer {
         this.password = password;
         readAccountsFromDatabase();
     }
-
+    public boolean checkSecurity() {
+        if(securityAccount == null) return false;
+        else return true;
+    }
     public String getUsername() {
         return this.username;
     }

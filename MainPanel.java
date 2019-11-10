@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import gui.*;
-
+import java.text.SimpleDateFormat;
 //user and manager interface
 @SuppressWarnings("serial")
 public class MainPanel extends AtmPanel{
@@ -682,11 +682,23 @@ public class MainPanel extends AtmPanel{
     				||panelName.equals("view")||panelName.equals("manager")) {
     			if (panelName.equals("manager") && (n==0||n==1)) {
     				Calendar calendar = Calendar.getInstance();
+					date = bank.getDate();
+
     				calendar.setTime(date);
     				calendar.add(Calendar.DATE, 1+n*2);
     				date = calendar.getTime();
+					//update database date
+					SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+					String[] updateValues = {formatter.format(date)};
+
+					String[] args = {"DATE"};
+
+					Database.updateData("BANKER","USERNAME", "admin", args, updateValues);
+					date = bank.getDate();
+					System.out.println(formatter.format(date));
+
     				bank.calculateLoanInterest(date);
-    				bank.addSaveInterest(1, date);
+					bank.addSaveInterest(1+n*2, date);
     				JOptionPane.showMessageDialog(null, 
                     		n==0?"One day added!":"Three days added!", "Update Date", JOptionPane.INFORMATION_MESSAGE);
     			}

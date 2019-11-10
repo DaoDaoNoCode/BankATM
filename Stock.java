@@ -9,10 +9,23 @@ public class Stock {
 
     protected int shares;
 
+    protected  double change;
+
     public Stock (String name, double price, int shares) {
         this.name = name;
         this.price = price;
         this.shares = shares;
+        this.change = 0.0;
+        if (!Database.hasDataRow(stockTableName, stockPrimaryKey, this.name)) {
+            String[] insertedData = new String[]{name, Double.toString(price), Integer.toString(shares)};
+            Database.insertData(stockTableName, insertedData);
+        }
+    }
+    public Stock (String name, double price, int shares, double change) {
+        this.name = name;
+        this.price = price;
+        this.shares = shares;
+        this.change = change;
         if (!Database.hasDataRow(stockTableName, stockPrimaryKey, this.name)) {
             String[] insertedData = new String[]{name, Double.toString(price), Integer.toString(shares)};
             Database.insertData(stockTableName, insertedData);

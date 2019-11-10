@@ -28,7 +28,8 @@ public class Initializer {
 	public Initializer(Bank newBank) {
 		//new panels
 		AtmFrame newFrame = new AtmFrame();
-		Date newDate = new Date();
+		//Date newDate = new Date();
+		Date newDate = newBank.getDate();
 		newStart = new StartPanel(newFrame, newBank, newDate);
 		newManagerLogin = new PWPanel("ManagerLogin", newFrame, newBank, newDate);
 		newPW = new PWPanel("PW", newFrame, newBank, newDate);

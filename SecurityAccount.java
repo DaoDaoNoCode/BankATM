@@ -31,7 +31,9 @@ public class SecurityAccount extends Account {
         type = AccountType.SECURITY;
         stocks = new HashMap<>();
     }
-
+    public HashMap<String, Stock> getStocks() {
+        return this.stocks;
+    }
     private void readStocksBoughtFromDatabase() {
         if (!Database.hasTable(stockDealTableName)) {
             Database.createTable(stockDealTableName, stockDealCreateArgs);

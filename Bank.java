@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
  */
 
 public class Bank {
+    private  Date date;
 
     private ArrayList<Customer> customers;
 
@@ -18,10 +19,16 @@ public class Bank {
     private HashMap<String, Stock> stocks;
 
     private final String customerTableName = "CUSTOMER";
-    
+
+    private  final String bankerTableName = "BANKER";
+
     private final String bankerTransactionTableName = "BANK_TRANSACTION";
 
     private final String stockTableName = "STOCK";
+
+    private  final String[] bankerCreateArgs = {"USERNAME varchar(20) not null", "PASSWORD varchar(20) not null", "DATE varchar(20) not null"};
+
+    private  final String[] bankerArgs = {"USERNAME", "PASSWORD", "DATE"};
 
     private final String[] customerCreateArgs = {"USERNAME varchar(20) not null", "PASSWORD varchar(20) not null"};
     
@@ -29,13 +36,13 @@ public class Bank {
     		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null, ID char(12) not null"};
 
     private final String[] stockCreateArgs = {"STOCK_NAME varchar(20) not null", "PRICE varchar(20) not null",
-            "SHARE varchar(20) not null"};
+            "SHARE varchar(20) not null", "CHANGE_PERCENTAGE varchar(20) not null"};
 
     private final String[] customerArgs = {"USERNAME", "PASSWORD"};
     
     private final String[] bankerTransactionArgs = {"ACCOUNT_NUMBER", "CUSTOMER", "TYPE", "MONEY", "CURRENCY", "DATE", "ID"};
 
-    private final String[] stockArgs = {"STOCK_NAME", "PRICE", "SHARE"};
+    private final String[] stockArgs = {"STOCK_NAME", "PRICE", "SHARE", "CHANGE_PERCENTAGE"};
 
     private final String customerPrimaryKey = "USERNAME";
     
@@ -43,12 +50,30 @@ public class Bank {
 
     private final String stockPrimaryKey = "STOCK_NAME";
 
+    private  final String bankerPrimaryKey = "USERNAME";
+
+    public Date getDate() {
+        List<List<String>> bankers = Database.queryData(bankerTableName, null, null, bankerArgs);
+        for (List<String> banker : bankers) {
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+                return formatter.parse(banker.get(2));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return new Date();
+    }
     public Bank() {
         readCustomerFromDatabase();
         readTransactionFromDatabase();
         readStockFromDatabase();
+        readBankerFromDatabase();
     }
-
+    private String getDateString(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+        return formatter.format(date);
+    }
     /**
      * access to the database for the existing data
      */
@@ -89,19 +114,53 @@ public class Bank {
             }
         }
     }
+    private void readBankerFromDatabase() {
+        if (!Database.hasTable(bankerTableName)) {
+            Database.createTable(bankerTableName, bankerCreateArgs);
+            Database.setPrimaryKey(bankerTableName, bankerPrimaryKey);
+        }
+        else {
+            List<List<String>> bankers = Database.queryData(bankerTableName, null, null, bankerArgs);
+            for (List<String> banker : bankers) {
+                try {
+                    SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+                    if (banker.get(2) != null)
+                        this.date = formatter.parse(banker.get(2));
+                    else {
+                        String[] values = {"admin", "admin", getDateString(new Date())};
+                        Database.insertData(bankerTableName, values);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     private void readStockFromDatabase() {
         stocks = new HashMap<>();
         if (!Database.hasTable(stockTableName)) {
             Database.createTable(stockTableName, stockCreateArgs);
             Database.setPrimaryKey(stockTableName, stockPrimaryKey);
-        } else {
-            List<List<String>> stocks = Database.queryData(stockTableName, null, null, stockArgs);
-            for (List<String> stock: stocks) {
-                double price = Double.valueOf(stock.get(1));
-                int share = Integer.valueOf(stock.get(2));
-                this.stocks.put(stock.get(0), new Stock(stock.get(0),price, share));
-            }
+
+            addNewStock("GENERAL ELECTRIC", 11.52, 10000, 0.0);
+            addNewStock("AMD", 36.29, 10000, 0.0);
+            addNewStock("BOA", 33.26, 10000, 0.0);
+            addNewStock("GAP", 16.68, 10000, 0.0);
+            addNewStock("DISNEY", 137.96, 10000, 0.0);
+            addNewStock("SEALED AIR", 40.02, 10000, 0.0);
+            addNewStock("NWS", 13.23, 10000, 0.0);
+            addNewStock("IRM", 32.54, 10000, 0.0);
+            addNewStock("APPLE", 260.14, 10000,0.0);
+            addNewStock("MICROSOFT", 145.96, 10000,0.0);
+            addNewStock("GOOGLE", 1309.30, 10000,0.0);
+        }
+        List<List<String>> res = Database.queryData(stockTableName, null, null, stockArgs);
+        for (List<String> stock: res) {
+            double price = Double.valueOf(stock.get(1));
+            int share = Integer.valueOf(stock.get(2));
+            double change = Double.valueOf(stock.get(3));
+            this.stocks.put(stock.get(0), new Stock(stock.get(0),price, share, change));
         }
     }
     
@@ -172,12 +231,36 @@ public class Bank {
     }
 
     public void setStockPrice(String name, double price) {
+        // Find old price from Database
+        String[] queryIndex = {"STOCK_NAME"};
+        String[] queryValue = {name};
+        List<List<String>> ls = Database.queryData(bankerTableName, queryIndex, queryValue, stockArgs);
+        for (List<String> stock : ls) {
+            double prevPrice = Double.valueOf(stock.get(1));
+            double change = (price - prevPrice) / prevPrice;
+
+            // update change in Database
+            String[] args = {"CHANGE_PERCENTAGE"};
+            String[] updateValues = {Double.toString(change)};
+            Database.updateData(stockTableName, "STOCK_NAME", name, args, updateValues);
+        }
+
         stocks.get(name).setPrice(price);
         String[] updateArgs = {"PRICE"};
         String[] updateValues = {Double.toString(price)};
         Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
-
+    public HashMap<String, Integer> getBuyersNum() {
+        HashMap<String, Integer> res = new HashMap<>();
+        for (Customer customer : customers) {
+            HashMap<String, Stock> temp = customer.getSecurityAccounts().getStocks();
+            for (String s : temp.keySet()) {
+                if (res.containsKey(s)) res.put(s, res.get(s) + temp.get(s).shares);
+                else res.put(s, temp.get(s).shares);
+            }
+        }
+        return res;
+    }
     public void deleteStock(String name) {
         if (stocks.get(name).shares > 0) {
             System.out.println("cannot delete a stock with positive shares");
@@ -189,15 +272,12 @@ public class Bank {
         }
     }
 
-    public void addNewStock(String name, double price, int shares) {
-        Stock newStock = new Stock(name, price, shares);
+    public void addNewStock(String name, double price, int shares, double change) {
+        Stock newStock = new Stock(name, price, shares, change);
         stocks.put(name, newStock);
-        if (!Database.hasDataRow(stockTableName, stockPrimaryKey, name)) {
-            String[] insertArgs = {name, Double.toString(price), Integer.toString(shares)};
-            Database.insertData(stockTableName, insertArgs);
-        } else {
-            System.out.println("This stock has already existed!");
-        }
+        String[] insertArgs = {name, Double.toString(price), Integer.toString(shares), Double.toString(change) };
+        Database.insertData(stockTableName, insertArgs);
+
     }
     public void addStockShare(String name, int shares) {
         stocks.get(name).buyShares(shares);
