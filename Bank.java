@@ -257,13 +257,18 @@ public class Bank {
         String[] updateValues = {Double.toString(price)};
         Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
+
+
     public HashMap<String, Integer> getBuyersNum() {
         HashMap<String, Integer> res = new HashMap<>();
+        for (String key : stocks.keySet()) {
+            res.put(key ,0);
+        }
         for (Customer customer : customers) {
             HashMap<String, Stock> temp = customer.getSecurityAccounts().getStocks();
             for (String s : temp.keySet()) {
-                if (res.containsKey(s)) res.put(s, res.get(s) + temp.get(s).shares);
-                else res.put(s, temp.get(s).shares);
+                // update shares bought sum
+                res.put(s, res.get(s) + temp.get(s).shares);
             }
         }
         return res;
