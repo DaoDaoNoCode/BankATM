@@ -202,8 +202,9 @@ public class Database {
     	sbQuery.append(tableName);
     	sbQuery.append(" WHERE ");
     	sbQuery.append(primaryKey);
-    	sbQuery.append(" = ");
+    	sbQuery.append("='");
     	sbQuery.append(primaryKeyValue);
+    	sbQuery.append("'");
     	String querySql = sbQuery.toString();
         System.out.println(querySql);
         try {

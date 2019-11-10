@@ -141,24 +141,26 @@ public class Bank {
             }
         }
     }
-
+    private  void initializeStock(String name, double price, int shares, double change) {
+        String[] insertArgs = {name, Double.toString(price), Integer.toString(shares), Double.toString(change) };
+        Database.insertData(stockTableName, insertArgs);
+    }
     private void readStockFromDatabase() {
         stocks = new HashMap<>();
         if (!Database.hasTable(stockTableName)) {
             Database.createTable(stockTableName, stockCreateArgs);
             Database.setPrimaryKey(stockTableName, stockPrimaryKey);
-
-            addNewStock("GENERAL ELECTRIC", 11.52, 10000, 0.0);
-            addNewStock("AMD", 36.29, 10000, 0.0);
-            addNewStock("BOA", 33.26, 10000, 0.0);
-            addNewStock("GAP", 16.68, 10000, 0.0);
-            addNewStock("DISNEY", 137.96, 10000, 0.0);
-            addNewStock("SEALED AIR", 40.02, 10000, 0.0);
-            addNewStock("NWS", 13.23, 10000, 0.0);
-            addNewStock("IRM", 32.54, 10000, 0.0);
-            addNewStock("APPLE", 260.14, 10000,0.0);
-            addNewStock("MICROSOFT", 145.96, 10000,0.0);
-            addNewStock("GOOGLE", 1309.30, 10000,0.0);
+            initializeStock("GENERAL ELECTRIC", 11.52, 10000, 0.0);
+            initializeStock("AMD", 36.29, 10000, 0.0);
+            initializeStock("BOA", 33.26, 10000, 0.0);
+            initializeStock("GAP", 16.68, 10000, 0.0);
+            initializeStock("DISNEY", 137.96, 10000, 0.0);
+            initializeStock("SEALED AIR", 40.02, 10000, 0.0);
+            initializeStock("NWS", 13.23, 10000, 0.0);
+            initializeStock("IRM", 32.54, 10000, 0.0);
+            initializeStock("APPLE", 260.14, 10000,0.0);
+            initializeStock("MICROSOFT", 145.96, 10000,0.0);
+            initializeStock("GOOGLE", 1309.30, 10000,0.0);
         }
         List<List<String>> res = Database.queryData(stockTableName, null, null, stockArgs);
         for (List<String> stock: res) {
