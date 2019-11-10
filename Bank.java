@@ -120,19 +120,24 @@ public class Bank {
             Database.setPrimaryKey(bankerTableName, bankerPrimaryKey);
         }
         else {
+
             List<List<String>> bankers = Database.queryData(bankerTableName, null, null, bankerArgs);
-            for (List<String> banker : bankers) {
-                try {
-                    SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-                    if (banker.get(2) != null)
+            if (bankers.size() == 0) {
+                date = new Date();
+                String[] values = {"admin", "admin", getDateString(date)};
+                System.out.println(getDateString(date));
+                Database.insertData(bankerTableName, values);
+            }
+            else {
+                for (List<String> banker : bankers) {
+                    try {
+                        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
                         this.date = formatter.parse(banker.get(2));
-                    else {
-                        String[] values = {"admin", "admin", getDateString(new Date())};
-                        Database.insertData(bankerTableName, values);
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                    } catch(ParseException e){
+                        e.printStackTrace();
                 }
+            }
+
             }
         }
     }
