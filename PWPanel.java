@@ -19,7 +19,7 @@ public class PWPanel extends AtmPanel{
 	
 	private String managerPW = "admin";
 	private String managerID = "admin";
-    SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
+    private final SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
 	public PWPanel(AtmFrame newFrame, Bank newBank, Date newDate) {
 		super(newFrame, newBank, newDate);
 	}

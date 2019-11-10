@@ -1,16 +1,19 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import gui.*;
-import java.text.SimpleDateFormat;
+
 //user and manager interface
 @SuppressWarnings("serial")
 public class MainPanel extends AtmPanel{
@@ -26,7 +29,7 @@ public class MainPanel extends AtmPanel{
 	
 	//show balance or name
 	private JLabel name;
-	private JLabel[] balance;
+	private JLabel[] labels;
 	private JLabel label1, label2;
 	private JComboBox<Account> accounts;
 	
@@ -35,14 +38,18 @@ public class MainPanel extends AtmPanel{
     private JComboBox<Customer> customers;
     private JComboBox<Account> extraAccounts;
     
-	//table component
+	//record component
 	private JTextArea record;
+	private AtmTextField enter;
 	private JScrollPane jsp;
-	//private DefaultTableModel data;
+	//stocks component
+	private JTable table;
+	private DefaultTableModel data;
 	
 	private JRadioButton radio1, radio2;
 	
 	private final String[] currencySign = {"$", "¥", "€"};
+	private final SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
 	public MainPanel(AtmFrame newFrame, Bank newBank, Date newDate) {
 		super(newFrame, newBank, newDate);
 		setLayout(null);
@@ -87,7 +94,7 @@ public class MainPanel extends AtmPanel{
 			break;
 		}
 		case "view":{
-			String[] names = {"Withdrawal", "Deposit", "Balance Inquiry", "Close Account"};
+			String[] names = {"Withdrawal", "Deposit", "Transactions", "Close Account"};
 			int[] sizes = {20, 20, 17, 17};
 			setButtons(names, sizes, 4);
 			buttonNum = 4;
@@ -116,18 +123,76 @@ public class MainPanel extends AtmPanel{
 			break;
 		}
 		case "security":{//view security
-			String[] names = {"Buy Stocks", "Sell stocks", "Cloce Account"};
-			int[] sizes = {17, 17, 17};
-			buttonNum = 3;
-			setButtons(names, sizes, 3);
-			buttons[2].setBackground(Color.gray);
+			String[] names = {"View Stocks", "Cloce Account"};
+			int[] sizes = {17, 17};
+			buttonNum = 2;
+			setButtons(names, sizes, 2);
+			buttons[1].setBackground(Color.gray);
+			showName();
+			setTitle("SECURITY");
+			break;
+		}
+		case "stocks":{
+			this.setRadio("All Stocks", "Holding Shares");
+			Object[][] context = {};
+			String[] column = {"Name", "Price", "Change", "Shares"};
+			data = new DefaultTableModel(context, column);
+			table = new JTable(data);
+			jsp = new JScrollPane(table);
+			setTable();
+			showName();
+			next = new NextButton();
+			add(next);
+			next.addActionListener(newListener);
+			break;
+		}
+		case "viewstocks":{
+			setTitle("View Stocks");
+			Object[][] context = {};
+			String[] column = {"Name", "Price", "Change", "Shares"};
+			data = new DefaultTableModel(context, column);
+			table = new JTable(data);
+			jsp = new JScrollPane(table);
+			setTable();
 			showBalance();
+			next = new NextButton("Details");
+			add(next);
+			next.addActionListener(newListener);
 			break;
 		}
-		case "buystock":{
+		case "buystocks":{
+			textAndBox("Select an Account");
+			enter = new AtmTextField("Enter Shares");
+			enter.setBounds(260, 270, 250, 100);
+			add(enter);
+			showStocks();
+			next = new NextButton("Buy");
+			add(next);
+			next.addActionListener(newListener);
 			break;
 		}
-		case "sellstock":{
+		case "sellstocks":{
+			textAndBox("Select an Account");
+			enter = new AtmTextField("Enter Shares");
+			enter.setBounds(260, 270, 250, 100);
+			add(enter);
+			showStocks();
+			next = new NextButton("Sell");
+			add(next);
+			next.addActionListener(newListener);
+			break;
+		}
+		case "setstocks":{
+			showStocks();
+			Object[][] context = {};
+			Object[] column = {"Holder", "Shares"};
+			data = new DefaultTableModel(context, column);
+			table = new JTable(data);
+			jsp = new JScrollPane(table);
+			setTable();
+			next = new NextButton("Set");
+			add(next);
+			next.addActionListener(newListener);
 			break;
 		}
 		case "transfer":{//adjust later
@@ -184,10 +249,11 @@ public class MainPanel extends AtmPanel{
 			break;
 		}
 		case "manager":{
-			String[] names = {"Add 1 Day", "Add 3 Days", "Daily Report", "View Customers"};
-			int[] sizes = {17, 17, 15, 15};
-			setButtons(names, sizes, 4);
-			buttonNum = 4;
+			String[] names = {"Add 1 Day", "Add 3 Days", "Daily Report"
+					, "View Customers", "View Stocks", "Add Stocks"};
+			int[] sizes = {17, 17, 15, 15, 17, 17};
+			setButtons(names, sizes, 6);
+			buttonNum = 6;
 			setTitle("Hello! Banker");
 			showBalance();
 			break;
@@ -239,17 +305,14 @@ public class MainPanel extends AtmPanel{
 	}
 	private void showBalance() {
 		name = new JLabel("#");
-		balance = new JLabel[3];
-		balance[0] = new JLabel("#");
-		balance[1] = new JLabel("#");
-		balance[2] = new JLabel("#");
+		labels = new JLabel[3];
+		labels[0] = new JLabel("#");
+		labels[1] = new JLabel("#");
+		labels[2] = new JLabel("#");
 		JLabel usd = new JLabel("USD");
 		JLabel cny = new JLabel("CNY");
 		JLabel eur = new JLabel("EUR");
-		
-		if (customer!=null)
-			resetBalance();
-		
+
 		name.setBounds(30, 110, 200, 100);
 		name.setFont(new Font("calibri",Font.BOLD, 20));
 		name.setForeground(Color.gray);
@@ -257,32 +320,35 @@ public class MainPanel extends AtmPanel{
 		usd.setBounds(30, 150, 200, 100);
 		usd.setFont(new Font("calibri",Font.BOLD, 15));
 		usd.setFocusable(false);
-		balance[0].setBounds(30, 180, 200, 100);
-		balance[0].setFont(new Font("calibri",Font.BOLD, 20));
-		balance[0].setForeground(Color.gray);
-		balance[0].setFocusable(false);
+		labels[0].setBounds(30, 180, 200, 100);
+		labels[0].setFont(new Font("calibri",Font.BOLD, 20));
+		labels[0].setForeground(Color.gray);
+		labels[0].setFocusable(false);
 		cny.setBounds(30, 215, 200, 100);
 		cny.setFont(new Font("calibri",Font.BOLD, 15));
 		cny.setFocusable(false);
-		balance[1].setBounds(30, 245, 200, 100);
-		balance[1].setFont(new Font("calibri",Font.BOLD, 20));
-		balance[1].setForeground(Color.gray);
-		balance[1].setFocusable(false);
+		labels[1].setBounds(30, 245, 200, 100);
+		labels[1].setFont(new Font("calibri",Font.BOLD, 20));
+		labels[1].setForeground(Color.gray);
+		labels[1].setFocusable(false);
 		eur.setBounds(30, 280, 200, 100);
 		eur.setFont(new Font("calibri",Font.BOLD, 15));
 		eur.setFocusable(false);
-		balance[2].setBounds(30, 310, 200, 100);
-		balance[2].setFont(new Font("calibri",Font.BOLD, 20));
-		balance[2].setForeground(Color.gray);
-		balance[2].setFocusable(false);
+		labels[2].setBounds(30, 310, 200, 100);
+		labels[2].setFont(new Font("calibri",Font.BOLD, 20));
+		labels[2].setForeground(Color.gray);
+		labels[2].setFocusable(false);
 
 		bg.add(name);
 		bg.add(usd);
 		bg.add(cny);
 		bg.add(eur);
-		bg.add(balance[0]);
-		bg.add(balance[1]);
-		bg.add(balance[2]);
+		bg.add(labels[0]);
+		bg.add(labels[1]);
+		bg.add(labels[2]);
+		
+		if (customer!=null)
+			resetBalance();
 	}
 	private void showName() {
 		JLabel welcome = new JLabel("Hello!");
@@ -302,6 +368,7 @@ public class MainPanel extends AtmPanel{
 		record.setBounds(245, 145, 475, 340);
 		record.setBackground(Color.decode("#F7F7F7"));
 		record.setFocusable(false);
+		record.setEditable(false);
         jsp.setBounds(240, 140, 500, 350);//horizon?
         jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		add(jsp);
@@ -318,12 +385,12 @@ public class MainPanel extends AtmPanel{
 		}
 	}
 	private void textAndBox(String line) {
-		label1 = new JLabel(line);
-		label1.setFont(new Font("calibri",Font.BOLD, 20));
-		label1.setBounds(260, 130, 300, 100);
+		JLabel label = new JLabel(line);
+		label.setFont(new Font("calibri",Font.BOLD, 20));
+		label.setBounds(260, 130, 300, 100);
 		accounts = new JComboBox<>();
 		accounts.setBounds(260, 200, 250, 100);
-		add(label1);
+		add(label);
 		add(accounts);
 	}
 	private void setRadio(String text1, String text2) {
@@ -337,20 +404,67 @@ public class MainPanel extends AtmPanel{
 		radio1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 radio2.setSelected(false);
-                if (panelName.equals("accounts"))
-                		reset();
+                reset();
             }
         	});
 		radio2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 radio1.setSelected(false);
-                if (panelName.equals("accounts"))
-                		reset();
+                reset();
             }
         	});
 		add(radio1);
 		add(radio2);
 	}
+	public void setTable() {
+		table.setBounds(245, 165, 475, 300);
+		table.setBackground(Color.decode("#F7F7F7"));
+		table.setFocusable(false);
+        jsp.setBounds(240, 160, 500, 310);
+        jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		add(jsp);
+	}
+	public void showStocks() {
+		name = new JLabel("#");
+		labels = new JLabel[3];
+		labels[0] = new JLabel("#");
+		labels[1] = new JLabel("#");
+		labels[2] = new JLabel("#");
+
+		name.setBounds(30, 110, 200, 100);
+		name.setFont(new Font("calibri",Font.BOLD, 20));
+		name.setForeground(Color.gray);
+		name.setFocusable(false);
+		labels[0].setBounds(30, 150, 200, 100);
+		labels[0].setFont(new Font("calibri",Font.BOLD, 20));
+		labels[0].setForeground(Color.gray);
+		labels[0].setFocusable(false);
+		labels[1].setBounds(75, 150, 200, 100);
+		labels[1].setFont(new Font("calibri",Font.BOLD, 20));
+		labels[1].setForeground(Color.gray);
+		labels[1].setFocusable(false);
+		labels[2].setBounds(30, 215, 200, 100);
+		labels[2].setFont(new Font("calibri",Font.BOLD, 20));
+		labels[2].setForeground(Color.gray);
+		labels[2].setFocusable(false);
+
+		bg.add(name);
+		bg.add(labels[0]);
+		bg.add(labels[1]);
+		bg.add(labels[2]);
+		
+
+		JLabel shares = new JLabel("Shares");
+		shares.setBounds(30, 185, 200, 100);
+		shares.setFont(new Font("calibri",Font.BOLD, 15));
+		shares.setFocusable(false);
+		bg.add(shares);
+		
+		if (stock!=null)
+			resetStocks();
+		
+	}
+	
 	//reset functions
 	private void resetTransactions() {
 		record.setText("");
@@ -358,7 +472,7 @@ public class MainPanel extends AtmPanel{
         transactions.sort(new Comparator<Transaction>() {
             @Override
             public int compare(Transaction o1, Transaction o2) {
-            	return o1.getID() - o2.getID();
+                return o1.getDate().compareTo(o2.getDate());
             }
         });
         for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -372,7 +486,7 @@ public class MainPanel extends AtmPanel{
 		transactions.sort(new Comparator<Transaction>() {
 			@Override
 			public int compare(Transaction o1, Transaction o2) {
-				return o1.getID() - o2.getID();
+				return o1.getDate().compareTo(o2.getDate());
 			}
 	 	});
 		for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -385,7 +499,7 @@ public class MainPanel extends AtmPanel{
         HashMap<Currency, Double> moneyEarned = bank.calculateMoneyEarned();
         int i = 0;
         for (Currency currency : Currency.values()) {
-        		balance[i].setText(currencySign[i]+moneyEarned.get(currency));
+        		labels[i].setText(currencySign[i]+moneyEarned.get(currency));
         		i++;
         }
 	}
@@ -393,7 +507,7 @@ public class MainPanel extends AtmPanel{
 		resetName();
 		int i = 0;
         for (Currency currency : Currency.values()) {
-            balance[i].setText(currencySign[i]+account.getDeposit(currency));
+        		labels[i].setText(currencySign[i]+account.getDeposit(currency));
             i++;
         }
         setTitle(account.getType().toString()+" - ●●●●"+account.getNumber().substring(8));
@@ -473,6 +587,40 @@ public class MainPanel extends AtmPanel{
 			updateViewAccounts((Customer) customers.getSelectedItem());
 		}
 	}
+	private void resetStocks() {
+		setTitle(stock.getName()+" "+format.format(date));
+		labels[0].setText("$"+stock.getUSDPrice());
+		labels[1].setText(stock.getChange()*100+"%");
+		labels[2].setText(String.valueOf(stock.getShares()));
+		if (stock.getChange()>0)
+			label2.setForeground(Color.decode("#32CD32"));
+		else if (stock.getChange()<0)
+			label2.setForeground(Color.decode("#EE5C42"));
+		else {
+			label2.setText("0.00%");
+			label2.setForeground(Color.gray);
+		}
+	}
+	private void resetTable() {
+		if (bank.getStocks() == null)
+			return;
+		if (panelName.equals("stocks") && radio1.isSelected()) {
+			SecurityAccount security = (SecurityAccount) account;
+			String[][] newContent = security.stockTable();
+			String[] column = {"Name", "Price", "Change", "Holding"};
+			data.setDataVector(newContent, column);
+		}
+		else if (panelName.equals("setstocks")){
+			String[][] newContent = bank.holderTable(stock.getName());
+			String[] column = {"Holder", "Shares"};
+			data.setDataVector(newContent, column);
+		}
+		else {
+			String[][] newContent = bank.stockTable();
+			String[] column = {"Name", "Price", "Change", "Shares"};
+			data.setDataVector(newContent, column);
+		}
+	}
 	private void updateViewAccounts(Customer selected) {
 		model.removeAllElements();
 		if (selected != null) {
@@ -515,7 +663,8 @@ public class MainPanel extends AtmPanel{
         jComboBoxCurrency.addItem(currency);
 
 		JPanel jPanel = new JPanel();
-		if (panelName!="loans" || radio1.isSelected()) {
+		if (!(panelName.equals("loans") && panelName.equals("buystock")) 
+				|| radio1.isSelected()) {
     			jPanel.add(new JLabel("Money: "));
     			jPanel.add(jTextFieldMoney);
 		}
@@ -639,6 +788,26 @@ public class MainPanel extends AtmPanel{
             				}
             				break;
             			}
+            			case "buystock":{
+            				SavingsAccount savings = (SavingsAccount) accounts.getSelectedItem();
+            				if (!savings.isPasswordRight(password)) {
+            					wrongPWMsg();
+            				}
+            				else {
+            					int repay = savings.repayLoan(currency, date);
+            					if (repay == -1) {
+            						JOptionPane.showMessageDialog(null, 
+            								"You have no loan to repay!", 
+            								"Request Failed", JOptionPane.ERROR_MESSAGE);
+            					} else if (repay == 0) {
+            						noMoneyMsg();
+            					} else {
+            						JOptionPane.showMessageDialog(null, 
+            								"Repay Finished!",
+            								"Repay success", JOptionPane.INFORMATION_MESSAGE);
+            					}
+            				}
+            			}
             			}
 				}
             	reset();
@@ -647,14 +816,21 @@ public class MainPanel extends AtmPanel{
 			}
     		}
     }
-    private boolean quickVerify(boolean isSave) {//verify password
+    private boolean quickVerify() {//verify password
     		JPasswordField jPasswordFieldPassword = new JPasswordField(15);
     		JPanel jPanel = new JPanel();
     		jPanel.add(new JLabel("Password: "));
     		jPanel.add(jPasswordFieldPassword);
+    		String dialogTitle;
+    		switch(panelName) {
+    		case "select":dialogTitle = "View Account";break;
+    		case "deposit":dialogTitle = "Quick Deposit";break;
+    		case "withdraw":dialogTitle = "Quick Withdraw";break;
+    		case "sellstocks":dialogTitle = "Sell Stocks";break;
+    		default:dialogTitle = "";
+    		}
     		int result = JOptionPane.showConfirmDialog(null, jPanel,
-    				"Quick "+(isSave?"Deposit":"Withdraw"), 
-    						JOptionPane.OK_CANCEL_OPTION);
+    				dialogTitle, JOptionPane.OK_CANCEL_OPTION);
     		if (result == JOptionPane.OK_OPTION) {
     			String password = String.valueOf(jPasswordFieldPassword.getPassword());
     			if (password.length()==0) {
@@ -666,6 +842,58 @@ public class MainPanel extends AtmPanel{
     				wrongPWMsg();
     		}
 		return false;
+    }
+    public double inputAmount() {//0 < input amount < billion
+		double result = 0;
+		String inputValue = JOptionPane.showInputDialog("Enter Amount");
+		if (inputValue.length() == 0) {
+			noInputMsg(); 
+		}
+		else {
+			try {
+				result = Double.parseDouble(inputValue);
+			}
+			catch(Exception e) {
+				requestFailMsg();
+			}
+		}
+		return result;
+    }
+    public void newStocks() {
+    		JTextField jTextFieldName = new JTextField(10);
+    		JTextField jTextFieldPrice = new JTextField(10);
+    		JPanel jPanel = new JPanel();
+
+    		jPanel.add(Box.createHorizontalStrut(15)); // a spacer
+    		jPanel.add(new JLabel("Name: "));
+    		jPanel.add(jTextFieldName);
+    		jPanel.add(Box.createHorizontalStrut(15)); // a spacer
+    		jPanel.add(new JLabel("Price: "));
+    		jPanel.add(jTextFieldPrice);
+    		
+    		int result = JOptionPane.showConfirmDialog(null, jPanel,
+    				"Add New Stock", JOptionPane.OK_CANCEL_OPTION);
+    		if (result == JOptionPane.OK_OPTION) {
+    			try {
+    				String stockname = jTextFieldName.getText();
+    				double price = Double.parseDouble(jTextFieldPrice.getText());
+    				if (stockname.length() == 0 || (price <= 0)) {
+    					requestFailMsg();
+    				}
+    				else if (bank.getStocks().get(stockname)!=null) {
+    					JOptionPane.showMessageDialog(null, 
+	                    		"This stock already exists!", "Request Failed", JOptionPane.ERROR_MESSAGE);
+    				}
+    				else {
+    					bank.addNewStock(stockname, price, 0, 0);
+    					JOptionPane.showMessageDialog(null, 
+	                    		"Add new stock success!", "Add New Stock", JOptionPane.INFORMATION_MESSAGE);
+    				}
+    			}
+    			catch(Exception e) {
+    				requestFailMsg();
+    			}
+    		}
     }
 	//events
     public void addEvent(ActionEvent e) {
@@ -679,30 +907,35 @@ public class MainPanel extends AtmPanel{
     }
     public void linkButton(int n) {
     		if (panelName.equals("main")||panelName.equals("openopt")
-    				||panelName.equals("view")||panelName.equals("manager")) {
+    				||panelName.equals("view")||panelName.equals("manager")
+    				||panelName.equals("security")) {
     			if (panelName.equals("manager") && (n==0||n==1)) {
     				Calendar calendar = Calendar.getInstance();
-					date = bank.getDate();
+				date = bank.getDate();
 
     				calendar.setTime(date);
     				calendar.add(Calendar.DATE, 1+n*2);
     				date = calendar.getTime();
-					//update database date
-					SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-					String[] updateValues = {formatter.format(date)};
+				//update database date
+				SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+				String[] updateValues = {formatter.format(date)};
 
-					String[] args = {"DATE"};
+				String[] args = {"DATE"};
 
-					Database.updateData("BANKER","USERNAME", "admin", args, updateValues);
-					date = bank.getDate();
-					System.out.println(formatter.format(date));
+				Database.updateData("BANKER","USERNAME", "admin", args, updateValues);
+				date = bank.getDate();
+				System.out.println(formatter.format(date));
 
     				bank.calculateLoanInterest(date);
-					bank.addSaveInterest(1+n*2, date);
+				bank.addSaveInterest(1+n*2, date);
     				JOptionPane.showMessageDialog(null, 
                     		n==0?"One day added!":"Three days added!", "Update Date", JOptionPane.INFORMATION_MESSAGE);
     			}
-    			else if (panelName.equals("view")&&(n==3)) {
+    			else if (panelName.equals("manager") && (n==5)){
+    				newStocks();
+    			}
+    			else if ((panelName.equals("view")&&(n==3))
+    					||(panelName.equals("security")&&(n==1))) {
         			closeAccount();
         			super.backward();
         		}
@@ -721,7 +954,7 @@ public class MainPanel extends AtmPanel{
     		}
     		else if (panelName.equals("withdraw")) {
     			if (n<5) {
-    				if (this.quickVerify(false)) {
+    				if (this.quickVerify()) {
     					int withdraw = account.withdraw(20*(n+1), Currency.USD, date);
     					if (withdraw == 0) {
     						noMoneyMsg();
@@ -740,7 +973,7 @@ public class MainPanel extends AtmPanel{
     		}
     		else if (panelName.equals("deposit")) {
     			if (n<5) {
-    				if (this.quickVerify(true)) {
+    				if (this.quickVerify()) {
             			account.save(20*(n+1), Currency.USD, date);
             			JOptionPane.showMessageDialog(null,
             					"Save Money Finished!", 
@@ -756,13 +989,14 @@ public class MainPanel extends AtmPanel{
     public void reset() {//update data
 		if (panelName.equals("main")||panelName.equals("loans")
 				||panelName.equals("transfer")||panelName.equals("openopt")
-				||panelName.equals("select"))
+				||panelName.equals("select")||panelName.equals("security")
+				||panelName.equals("stocks"))
 			resetName();
 		else if (panelName.equals("deposit")||panelName.equals("withdraw")
 				||panelName.equals("inquiry")||panelName.equals("view"))
     			resetBalance();
     		else if (panelName.equals("manager")||panelName.equals("daily")
-    				||panelName.equals("accounts")||panelName.equals("security"))
+    				||panelName.equals("accounts")||panelName.equals("viewstocks"))
     			resetEarned();
     		if (panelName.equals("transfer"))
     			resetTransfer();
@@ -778,14 +1012,30 @@ public class MainPanel extends AtmPanel{
     		if (panelName.equals("accounts")) {
     			resetAccounts();
     		}
+    		if (panelName.equals("buystocks") || panelName.equals("sellstocks")
+    				|| panelName.equals("setstocks")) {
+    			resetStocks();
+    		}
+    		if (panelName.equals("buystocks") || panelName.equals("sellstocks")) {
+    			resetSelect();
+    			enter.setText("");
+    		}
+    		if (panelName.equals("stocks") || panelName.equals("viewstocks")) {
+    			resetTable();
+    		}
     }
     public void forward() {
     		if (panelName.equals("select")) {
-    			Account account = (Account) accounts.getSelectedItem();
-    			setAccount(account);
-    			if (account != null) {
-    				setAccount(account);
-    				super.forward();
+    			Account newAccount = (Account) accounts.getSelectedItem();
+    			setAccount(newAccount);
+    			if (newAccount != null) {
+    				setAccount(newAccount);
+    				if (this.quickVerify()) {
+    					if (account instanceof SecurityAccount)
+    						super.link();
+    					else
+    						super.forward();
+    				}
     			}
     			else {
     				noAccountMsg();
@@ -840,6 +1090,58 @@ public class MainPanel extends AtmPanel{
         			}
     			}
     		}
+    		else if (panelName.equals("buystocks")){
+    			if (accounts.getSelectedItem() == null) {
+				noAccountMsg();
+				return;
+			}
+			else if (!(accounts.getSelectedItem() instanceof SavingsAccount)) {
+				JOptionPane.showMessageDialog(null, 
+						"Please select a savings account!", 
+						"Request Failed", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			else {
+				try {
+					int shares = Integer.parseInt(enter.getText());
+					if (shares<=0) {
+						requestFailMsg();
+					}
+		    			else
+		    				transactions();
+				}catch (Exception e) {
+					requestFailMsg();
+				}
+			}
+    		}
+    		else if (panelName.equals("sellstocks")){
+    			if (accounts.getSelectedItem() == null) {
+    				noAccountMsg();
+    				return;
+    			}
+    			else if (!(accounts.getSelectedItem() instanceof SavingsAccount)) {
+    				JOptionPane.showMessageDialog(null, 
+    						"Please select a savings account!", 
+    						"Request Failed", JOptionPane.ERROR_MESSAGE);
+    				return;
+    			}
+    			else {
+    				try {
+    					int shares = Integer.parseInt(enter.getText());
+    					if (shares<=0) {
+    						requestFailMsg();
+    					}
+    		    			else if (quickVerify()) {
+    		    				//stock.sell
+    		    			}
+    				}catch (Exception e) {
+    					requestFailMsg();
+    				}
+    			}
+    		}
+    		else if (panelName.equals("viewstocks")){
+    			//stock.setprice(input());
+    		}
     		else
     			super.forward();
     }
@@ -860,7 +1162,7 @@ public class MainPanel extends AtmPanel{
     }
     private void requestFailMsg() {
     		JOptionPane.showMessageDialog(null,
-				"Invalid request.",
+				"Invalid input.",
 				"Request Failed", JOptionPane.ERROR_MESSAGE);
     }
     private void wrongPWMsg() {

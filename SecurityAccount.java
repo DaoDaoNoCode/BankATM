@@ -139,4 +139,23 @@ public class SecurityAccount extends Account {
     public String toString() {
     		return type.toString();
     }
+    
+    public String[][] stockTable(){
+		String[][] table = new String[stocks.size()][4];
+		int i = 0;
+		for (String name: stocks.keySet()) {
+			table[i][0] = name;
+			table[i][1] = String.valueOf(stocks.get(name).getUSDPrice());
+			table[i][2] = String.valueOf(stocks.get(name).getChange());
+			table[i][3] = String.valueOf(stocks.get(name).getShares());
+			i++;
+		}
+		return table;
+    }
+    
+    public boolean hasStock(String stockName) {
+    		if (stocks.get(stockName)!=null)
+    			return true;
+    		return false;
+    }
 }

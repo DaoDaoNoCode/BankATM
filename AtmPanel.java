@@ -23,6 +23,7 @@ public abstract class AtmPanel extends JPanel{
 	protected Customer customer;
 	protected Account account;
 	protected String panelName;
+	protected Stock stock;
 	
 	public AtmPanel(AtmFrame newFrame, Bank newBank, Date newDate){
 		setLayout(null);
@@ -63,10 +64,14 @@ public abstract class AtmPanel extends JPanel{
 	public void setDate(Date newDate) {
 		date = newDate;
 	}
+	public void setStock(Stock newStock) {
+		stock = newStock;
+	}
 	public void forward() {
 		forward.setAccount(account);
 		forward.setCustomer(customer);
 		forward.setDate(date);
+		forward.setStock(stock);
 		frame.addPanel(forward);
 	}
 	public void backward() {
@@ -84,6 +89,7 @@ public abstract class AtmPanel extends JPanel{
 			backward.setAccount(account);
 			backward.setCustomer(customer);
 			backward.setDate(date);
+			backward.setStock(stock);
 			frame.addPanel(backward);
 		}
 	}
@@ -91,6 +97,7 @@ public abstract class AtmPanel extends JPanel{
 		link.setAccount(account);
 		link.setCustomer(customer);
 		link.setDate(date);
+		link.setStock(stock);
 		frame.addPanel(link);
 	}
 	abstract public void reset(); //for overriden

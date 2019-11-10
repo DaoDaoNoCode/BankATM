@@ -25,6 +25,12 @@ public class Initializer {
 	MainPanel newManager;
 	MainPanel newDaily;
 	MainPanel newAccounts;
+	
+	MainPanel newStocks;
+	MainPanel newSellStocks;
+	MainPanel newBuyStocks;
+	MainPanel newViewStocks;
+	MainPanel newSetStocks;
 	public Initializer(Bank newBank) {
 		//new panels
 		AtmFrame newFrame = new AtmFrame();
@@ -54,6 +60,12 @@ public class Initializer {
 		newManager = new MainPanel("manager", newFrame, newBank, newDate);
 		newDaily = new MainPanel("daily", newFrame, newBank, newDate);
 		newAccounts = new MainPanel("accounts", newFrame, newBank, newDate);
+		
+		newStocks = new MainPanel("stocks", newFrame, newBank, newDate);
+		newSellStocks = new MainPanel("sellstocks", newFrame, newBank, newDate);
+		newBuyStocks = new MainPanel("buystocks", newFrame, newBank, newDate);
+		newViewStocks = new MainPanel("viewstocks", newFrame, newBank, newDate);
+		newSetStocks = new MainPanel("setstocks", newFrame, newBank, newDate);
 		newFrame.setPanel(newWelcome);
 	}
 	public void setLinks() {
@@ -77,11 +89,16 @@ public class Initializer {
 		newManager.setLinkButton(newManager, 1);
 		newManager.setLinkButton(newDaily, 2);
 		newManager.setLinkButton(newAccounts, 3);
+		newManager.setLinkButton(newViewStocks, 4);
+		newManager.setLinkButton(newManager, 5);
 		newManager.setBack(newStart);
 		newAccounts.setFore(newBankerInquiry);
 		newAccounts.setBack(newManager);
 		newDaily.setBack(newManager);
 		newBankerInquiry.setBack(newAccounts);
+		newViewStocks.setBack(newManager);
+		newViewStocks.setFore(newSetStocks);
+		newSetStocks.setBack(newViewStocks);
 	
 		newMain.setBack(newStart);
 		newMain.setLinkButton(newOpenopt, 0);
@@ -102,7 +119,14 @@ public class Initializer {
 		newSelect.setBack(newMain);
 		newSelect.setFore(newView);
 		newSelect.setLink(newViewSecurity);
-		newViewSecurity.setBack(newView);
+		newViewSecurity.setBack(newMain);
+		newViewSecurity.setLinkButton(newStocks, 0);
+		newStocks.setBack(newViewSecurity);
+		newStocks.setFore(newBuyStocks);
+		newStocks.setLink(newSellStocks);
+		newBuyStocks.setBack(newStocks);
+		newSellStocks.setBack(newStocks);
+		
 		newView.setBack(newMain);
 		newView.setLinkButton(newWithdraw, 0);
 		newView.setLinkButton(newDeposit, 1);

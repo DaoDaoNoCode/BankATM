@@ -304,4 +304,35 @@ public class Bank {
         String[] updateValues = {"SHARE - " + shares};
         Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
+ 
+    public String[][] stockTable(){
+    		String[][] table = new String[stocks.size()][4];
+    		int i = 0;
+    		for (String name: stocks.keySet()) {
+    			table[i][0] = name;
+    			table[i][1] = String.valueOf(stocks.get(name).getUSDPrice());
+    			table[i][2] = String.valueOf(stocks.get(name).getChange());
+    			table[i][3] = String.valueOf(stocks.get(name).getShares());
+    			i++;
+    		}
+    		return table;
+    }
+    
+    public String[][] holderTable(String stockName){
+    		ArrayList<String[]> tableList = new ArrayList<String[]>();
+    		String[] firstLine = {"Total", String.valueOf(stocks.get(stockName).getShares())};
+    		tableList.add(firstLine);
+    		for (Customer customer: customers) {
+    			if (customer.getSecurityAccounts()!=null 
+    					&& customer.getSecurityAccounts().hasStock(stockName)) {
+    				String[] line = {customer.toString(), 
+    						String.valueOf(customer.getSecurityAccounts().getStocks().get(stockName).getShares())};
+    				tableList.add(line);
+    			}
+    		}
+    		String[][] table = new String[tableList.size()][2];
+    		for (int i=0; i<tableList.size(); i++)
+    			table[i] = tableList.get(i);
+    		return table;
+    }
 }

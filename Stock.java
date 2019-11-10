@@ -9,7 +9,7 @@ public class Stock {
 
     protected int shares;
 
-    protected  double change;
+    protected double change;
 
     public Stock (String name, double price, int shares) {
         this.name = name;
@@ -27,7 +27,7 @@ public class Stock {
         this.shares = shares;
         this.change = change;
         if (!Database.hasDataRow(stockTableName, stockPrimaryKey, this.name)) {
-            String[] insertedData = new String[]{name, Double.toString(price), Integer.toString(shares)};
+            String[] insertedData = new String[]{name, Double.toString(price), Integer.toString(shares), Double.toString(change)};
             Database.insertData(stockTableName, insertedData);
         }
     }
@@ -46,6 +46,14 @@ public class Stock {
 
     public String getName() {
         return this.name;
+    }
+    
+    public int getShares() {
+    		return this.shares;
+    }
+    
+    public double getChange() {
+    		return this.change;
     }
 
     // for Bank
