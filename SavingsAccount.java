@@ -64,14 +64,11 @@ public class SavingsAccount extends Account {
         else {
             double balance = deposit.get(currency);
             loan.put(currency, twoDecimal(money));
-            updateLoanInDatabase(currency);
-
             BigDecimal interestRateBig = BigDecimal.valueOf(0.001);
             BigDecimal moneyBig = BigDecimal.valueOf(money);
             double currentInterest = interestRateBig.multiply(moneyBig).doubleValue();
             loanInterest.put(currency, twoDecimal(currentInterest));
             updateLoanInDatabase(currency);
-
             deposit.put(currency, twoDecimal(money + balance));
             updateDepositInDatabase(currency);
             Transaction transaction = new Transaction(money, currency, TransactionType.LOAN, owner, super.getNumber(), date);
@@ -119,18 +116,17 @@ public class SavingsAccount extends Account {
             } else {
                 double currentBalance = deposit.get(currency);
                 loan.put(currency, 0.0);
-                updateLoanInDatabase(currency);
                 loanInterest.put(currency, 0.0);
                 updateLoanInDatabase(currency);
                 deposit.put(currency, twoDecimal(currentBalance - currentLoan - currentInterest));
-                updateLoanInDatabase(currency);
+                updateDepositInDatabase(currency);
                 Transaction transaction1 = new Transaction(-currentLoan, currency, TransactionType.LOAN_REPAY, owner, super.getNumber(), date);
+                transaction1.insertTransactionIntoDatabase();
                 Transaction transaction2 = new Transaction(-currentInterest, currency, TransactionType.LOAN_INTEREST, owner, super.getNumber(), date);
+                transaction2.insertTransactionIntoDatabase();
                 transactions.add(transaction1);
                 transactions.add(transaction2);
                 bank.addTransaction(transaction2);
-                transaction1.insertTransactionIntoDatabase();
-                transaction2.insertTransactionIntoDatabase();
                 return 1;
             }
         }

@@ -358,7 +358,7 @@ public class MainPanel extends AtmPanel{
         transactions.sort(new Comparator<Transaction>() {
             @Override
             public int compare(Transaction o1, Transaction o2) {
-                return o1.getDate().compareTo(o2.getDate());
+            	return o1.getID() - o2.getID();
             }
         });
         for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -372,7 +372,7 @@ public class MainPanel extends AtmPanel{
 		transactions.sort(new Comparator<Transaction>() {
 			@Override
 			public int compare(Transaction o1, Transaction o2) {
-				return o1.getDate().compareTo(o2.getDate());
+				return o1.getID() - o2.getID();
 			}
 	 	});
 		for (int i = transactions.size() - 1; i >= 0; i--) {

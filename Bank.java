@@ -33,7 +33,7 @@ public class Bank {
     private final String[] customerCreateArgs = {"USERNAME varchar(20) not null", "PASSWORD varchar(20) not null"};
     
     private final String[] bankerTransactionCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "CUSTOMER varchar(20) not null", "TYPE varchar(20) not null",
-    		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null, ID char(12) not null"};
+    		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null, ID varchar(20) not null"};
 
     private final String[] stockCreateArgs = {"STOCK_NAME varchar(20) not null", "PRICE varchar(20) not null",
             "SHARE varchar(20) not null", "CHANGE_PERCENTAGE varchar(20) not null"};
@@ -105,7 +105,7 @@ public class Bank {
                     try {
                         Date date = formatter.parse(transaction.get(5));
                         this.bankerTransactions.add(new Transaction(money, Currency.valueOf(transaction.get(4)),
-                                TransactionType.valueOf(transaction.get(2)), transaction.get(1), transaction.get(0), date));
+                                TransactionType.valueOf(transaction.get(2)), transaction.get(1), transaction.get(0), Integer.parseInt(transaction.get(6)), date));
                     } catch (ParseException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

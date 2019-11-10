@@ -42,17 +42,18 @@ public class CheckingAccount extends Account {
             return 0;
         } else {
             deposit.put(currency, twoDecimal(balance - money - transferFee));
+            updateDepositInDatabase(currency);
             Transaction transaction1 = new Transaction(-money, currency, TransactionType.TRANSFER_OUT, owner, super.getNumber(), date);
+            transaction1.insertTransactionIntoDatabase();
             Transaction transaction2 = new Transaction(-transferFee, currency, TransactionType.TRANSFER_FEE, owner, super.getNumber(), date);
-            Transaction transaction3 = new Transaction(money, currency, TransactionType.TRANSFER_IN, account.getNumber(), super.getNumber(), date);
+            transaction2.insertTransactionIntoDatabase();
+            Transaction transaction3 = new Transaction(money, currency, TransactionType.TRANSFER_IN, account.getOwner(), account.getNumber(), date);
+            transaction3.insertTransactionIntoDatabase();
             transactions.add(transaction1);
             transactions.add(transaction2);
             account.transferIn(money, currency);
             account.addTransaction(transaction3);
             bank.addTransaction(transaction2);
-            transaction1.insertTransactionIntoDatabase();
-            transaction2.insertTransactionIntoDatabase();
-            transaction3.insertTransactionIntoDatabase();
             return 1;
         }
     }
@@ -60,6 +61,7 @@ public class CheckingAccount extends Account {
     private void transferIn(double money, Currency currency) {
         double balance = deposit.get(currency);
         deposit.put(currency, twoDecimal(balance + money));
+        updateDepositInDatabase(currency);
     }
 
     @Override

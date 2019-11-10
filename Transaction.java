@@ -25,7 +25,7 @@ public class Transaction {
 
     private String account; // account number
     
-    private String ID;
+    private int ID;
 
     private double money;
 
@@ -39,10 +39,20 @@ public class Transaction {
         this.date = date;
     }
 
+    public Transaction(double money, Currency currency, TransactionType transactionType, String customer, String account, int ID, Date date) {
+        this.money = Account.twoDecimal(money);
+        this.currency = currency;
+        this.transactionType = transactionType;
+        this.customer = customer;
+        this.account = account;
+        this.ID = ID;
+        this.date = date;
+    }
+
     public void insertTransactionIntoDatabase() {
         String dateStr = "MM-dd-yyyy";
         DateFormat df = new SimpleDateFormat(dateStr);
-        String[] insertedData = new String[]{account, customer, transactionType.toString(), Double.toString(money), currency.toString(), df.format(date), this.ID};
+        String[] insertedData = new String[]{account, customer, transactionType.toString(), Double.toString(money), currency.toString(), df.format(date), String.valueOf(this.ID)};
         Database.insertData(bankerTransactionTableName, insertedData);
     }
 
@@ -99,21 +109,16 @@ public class Transaction {
         return formatter.format(date);
     }
     
-    public String getID() {
+    public int getID() {
     	return this.ID;
     }
 
-    /**
-     * Generate a random transaction ID number of 12 digits
-     */
     private void generateIDNumber() {
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < TRANSACTION_NUMBER_LENGTH; i++) {
-            int number = random.nextInt(10);
-            sb.append((char) (number + '0'));
-        }
-        this.ID = sb.toString();
+        String[] args = {"COUNT(*)"};
+        String resultStr = Database.queryData(bankerTransactionTableName, null, null, args).get(0).get(0);
+        System.out.println(resultStr);
+        int resultNum = Integer.valueOf(resultStr);
+        this.ID = resultNum + 1;
     }
     
     public String toString() {

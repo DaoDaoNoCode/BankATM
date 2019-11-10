@@ -16,11 +16,11 @@ public class Account {
     private final String bankerTransactionTableName = "BANK_TRANSACTION";
     
     private final String[] bankerTransactionCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "CUSTOMER varchar(20) not null", "TYPE varchar(20) not null",
-    		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null, ID char(12) not null"};
+    		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null", "ID varchar(20) not null"};
 
     private final String bankerTransactionPrimaryKey = "ID";
     
-    private final String[] bankerTransactionArgs = {"TYPE", "MONEY", "CURRENCY", "DATE"};
+    private final String[] bankerTransactionArgs = {"TYPE", "MONEY", "CURRENCY", "DATE", "ID"};
     
     protected Bank bank;
 
@@ -109,6 +109,10 @@ public class Account {
         return this.createDate;
     }
 
+    public String getOwner() {
+        return this.owner;
+    }
+
     public String getNumber() {
         return this.number;
     }
@@ -134,24 +138,7 @@ public class Account {
         Transaction transaction = new Transaction(money, currency, TransactionType.SAVE, owner, this.getNumber(), date);
         transactions.add(transaction);
         transaction.insertTransactionIntoDatabase();
-        String tableName;
-        if (this.type == AccountType.CHECKING) {	
-            tableName = "CHECKING_ACCOUNT";	
-        } else if (this.type == AccountType.SAVINGS) {	
-            tableName = "SAVINGS_ACCOUNT";	
-        } else {	
-            tableName = "SECURITY_ACCOUNT";	
-        }	
-        String[] args;	
-        if (currency == Currency.USD) {	
-            args = new String[]{"USD_BALANCE"};	
-        } else if (currency == Currency.EUR) {	
-            args = new String[]{"EUR_BALANCE"};	
-        } else {	
-            args = new String[]{"CNY_BALANCE"};	
-        }
-        String[] updateValues = {deposit.get(currency).toString()};
-        Database.updateData(tableName, "ACCOUNT_NUMBER", number, args, updateValues);
+        updateDepositInDatabase(currency);
     }
 
     /**
@@ -174,13 +161,14 @@ public class Account {
             return 0;
         } else {
             Transaction transaction1 = new Transaction(-money, currency, TransactionType.WITHDRAW, owner, this.getNumber(), date);
+            transaction1.insertTransactionIntoDatabase();
             Transaction transaction2 = new Transaction(withdrawFee, currency, TransactionType.WITHDRAW_FEE, owner, this.getNumber(), date);
+            transaction2.insertTransactionIntoDatabase();
             deposit.put(currency, twoDecimal(balance - money - withdrawFee));
+            updateDepositInDatabase(currency);
             transactions.add(transaction1);
             transactions.add(transaction2);
             bank.addTransaction(transaction2);
-            transaction1.insertTransactionIntoDatabase();
-            transaction2.insertTransactionIntoDatabase();
             return 1;
         }
     }
@@ -224,13 +212,14 @@ public class Account {
                     BigDecimal currentBalanceBig = BigDecimal.valueOf(currentBalance);
                     double saveInterest = saveInterestRateBig.multiply(currentBalanceBig).doubleValue();
                     deposit.put(currency, twoDecimal(currentBalance + saveInterest));
+                    updateDepositInDatabase(currency);
                     currentBalance += saveInterest;
                     loop--;
                     calendar.add(Calendar.DATE, 1);
                     Transaction transaction = new Transaction(saveInterest, currency, TransactionType.SAVE_INTEREST, owner, this.getNumber(), calendar.getTime());
+                    transaction.insertTransactionIntoDatabase();
                     transactions.add(transaction);
                     bank.addTransaction(transaction);
-                    transaction.insertTransactionIntoDatabase();
                 }
             }
         }
@@ -246,6 +235,8 @@ public class Account {
         for (Currency currency : Currency.values()) {
             double balance = deposit.get(currency);
             if (balance > 0) {
+                deposit.put(currency, 0.0);
+                updateDepositInDatabase(currency);
                 Transaction transaction = new Transaction(-balance, currency, TransactionType.BALANCE_REMAINED_WHEN_CLOSE, owner, this.getNumber(), date);
                 transactions.add(transaction);
                 bank.addTransaction(transaction);
@@ -287,10 +278,11 @@ public class Account {
     		for (List<String> transaction: transactions) {
     			Date date = new Date();
     			double money = Double.valueOf(transaction.get(1));
+    			int ID = Integer.parseInt(transaction.get(4));
     			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
     			try {
     				date = sdf.parse(transaction.get(3));
-                    Transaction t = new Transaction(money, Currency.valueOf(transaction.get(2)), TransactionType.valueOf(transaction.get(0)), owner, number, date);
+                    Transaction t = new Transaction(money, Currency.valueOf(transaction.get(2)), TransactionType.valueOf(transaction.get(0)), owner, number, ID, date);
                     this.transactions.add(t);
     			} catch (ParseException e) {
     				e.printStackTrace();
