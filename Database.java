@@ -212,7 +212,7 @@ public class Database {
             Connection conn = DriverManager.getConnection(url, user, password);
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(querySql);
-            if (!resultSet.isBeforeFirst()) {
+            if (resultSet.next()) {
             	hasData = true;
             }
             statement.close();
@@ -223,7 +223,6 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
         return hasData;
     }
 }

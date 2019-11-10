@@ -167,7 +167,7 @@ public class Bank {
             double price = Double.valueOf(stock.get(1));
             int share = Integer.valueOf(stock.get(2));
             double change = Double.valueOf(stock.get(3));
-            this.stocks.put(stock.get(0), new Stock(stock.get(0),price, share, change));
+            this.stocks.put(stock.get(0), new Stock(stock.get(0), price, share, change));
         }
     }
     
