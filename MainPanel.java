@@ -45,6 +45,7 @@ public class MainPanel extends AtmPanel{
 	//stocks component
 	private JTable table;
 	private DefaultTableModel data;
+	private int dealshares;
 	
 	private JRadioButton radio1, radio2;
 	
@@ -172,10 +173,15 @@ public class MainPanel extends AtmPanel{
 		}
 		case "buystocks":{
 			textAndBox("Select an Account");
-			enter = new AtmTextField("Enter Shares");
-			enter.setBounds(260, 270, 250, 100);
+			enter = new AtmTextField("");
+			enter.setBounds(260, 360, 250, 30);
+			enter.setHorizontalAlignment(JTextField.LEFT);
 			add(enter);
+			JLabel label = new JLabel("Enter Shares");
+			label.setFont(new Font("calibri",Font.BOLD, 20));
+			label.setBounds(260, 260, 300, 100);
 			showStocks();
+			add(label);
 			next = new NextButton("Buy");
 			add(next);
 			next.addActionListener(newListener);
@@ -183,10 +189,15 @@ public class MainPanel extends AtmPanel{
 		}
 		case "sellstocks":{
 			textAndBox("Select an Account");
-			enter = new AtmTextField("Enter Shares");
-			enter.setBounds(260, 270, 250, 100);
+			enter = new AtmTextField("");
+			enter.setBounds(260, 360, 250, 30);
+			enter.setHorizontalAlignment(JTextField.LEFT);
 			add(enter);
+			JLabel label = new JLabel("Enter Shares");
+			label.setFont(new Font("calibri",Font.BOLD, 20));
+			label.setBounds(260, 260, 300, 100);
 			showStocks();
+			add(label);
 			next = new NextButton("Sell");
 			add(next);
 			next.addActionListener(newListener);
@@ -616,6 +627,7 @@ public class MainPanel extends AtmPanel{
 		}
 	}
 	private void resetStocks() {
+		if (!panelName.equals("sellstocks")&&!panelName.equals("buystocks"))
 		setTitle(stock.getName()+"  "+format.format(date));
 		name.setText(stock.getName());
 		labels[0].setText("$"+stock.getUSDPrice());
@@ -692,8 +704,9 @@ public class MainPanel extends AtmPanel{
         jComboBoxCurrency.addItem(currency);
 
 		JPanel jPanel = new JPanel();
-		if (!(panelName.equals("loans") && panelName.equals("buystock")) 
-				|| radio1.isSelected()) {
+		if (!(panelName.equals("loans")&&radio2.isSelected()) 
+				&& !panelName.equals("buystocks") 
+				&& !panelName.equals("sellstocks")) {
     			jPanel.add(new JLabel("Money: "));
     			jPanel.add(jTextFieldMoney);
 		}
@@ -711,8 +724,10 @@ public class MainPanel extends AtmPanel{
 			Currency currency = (Currency) jComboBoxCurrency.getSelectedItem();
 			String password = String.valueOf(jPasswordFieldPassword.getPassword());
 			try {
-				if ((panelName!="loans" || radio1.isSelected())
-						&&jTextFieldMoney.getText().length()==0) {
+				if ((!(panelName.equals("loans")&&radio2.isSelected()) 
+						&& !panelName.equals("buystocks") 
+						&& !panelName.equals("sellstocks"))
+					&&jTextFieldMoney.getText().length()==0) {
  					noInputMsg();
 				}
 				else if (password.length()==0) {
@@ -817,25 +832,45 @@ public class MainPanel extends AtmPanel{
             				}
             				break;
             			}
-            			case "buystock":{
+            			case "buystocks":{
             				SavingsAccount savings = (SavingsAccount) accounts.getSelectedItem();
             				if (!savings.isPasswordRight(password)) {
             					wrongPWMsg();
             				}
             				else {
-            					int repay = savings.repayLoan(currency, date);
-            					if (repay == -1) {
+            					int buy = customer.getSecurityAccounts().buyStock(stock.getName(), dealshares, currency, savings, date);
+            					if (buy == -1) {
             						JOptionPane.showMessageDialog(null, 
-            								"You have no loan to repay!", 
+            								"Cannot buy more than bank's inventory!", 
             								"Request Failed", JOptionPane.ERROR_MESSAGE);
-            					} else if (repay == 0) {
+            					} else if (buy == 1) {
             						noMoneyMsg();
             					} else {
             						JOptionPane.showMessageDialog(null, 
-            								"Repay Finished!",
-            								"Repay success", JOptionPane.INFORMATION_MESSAGE);
+            								"Purchase Finished!",
+            								"Purchase success", JOptionPane.INFORMATION_MESSAGE);
             					}
             				}
+            				break;
+            			}
+            			case "sellstocks":{
+            				SavingsAccount savings = (SavingsAccount) accounts.getSelectedItem();
+            				if (!savings.isPasswordRight(password)) {
+            					wrongPWMsg();
+            				}
+            				else {
+            					int sell = customer.getSecurityAccounts().sellStock(stock.getName(), dealshares, currency, savings, date);
+            					if (sell == -1) {
+            						JOptionPane.showMessageDialog(null, 
+            								"Cannot sell more than your holding shares!", 
+            								"Request Failed", JOptionPane.ERROR_MESSAGE);
+            					} else {
+            						JOptionPane.showMessageDialog(null, 
+            								"Selling Finished!",
+            								"Selling success", JOptionPane.INFORMATION_MESSAGE);
+            					}
+            				}
+            				break;
             			}
             			}
 				}
@@ -875,7 +910,6 @@ public class MainPanel extends AtmPanel{
     public void setStocks() {
 		JPanel panel1 = new JPanel();
 		JPanel panel2 = new JPanel();
-		JPanel panel3 = new JPanel();
         JTextField amountField = new JTextField(10);
         JTextField shareField = new JTextField(10);
         JPasswordField bankerPWField = new JPasswordField(10);
@@ -896,7 +930,7 @@ public class MainPanel extends AtmPanel{
 		int result = JOptionPane.showConfirmDialog(null, jTabbedPane,
 				"Set Stock", JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.OK_OPTION) {
-			try {
+			//try {
 				if (jTabbedPane.getSelectedIndex()==0) {
 					if (amountField.getText().length() > 0) {
 						double price = Double.parseDouble(amountField.getText());
@@ -951,10 +985,9 @@ public class MainPanel extends AtmPanel{
 						}
 					}
 				}
-			}
-			catch(Exception e) {
+			/*}catch(Exception e) {
 				requestFailMsg();
-			}
+			}*/
 		}
     }
     public void newStocks() {
@@ -1048,6 +1081,11 @@ public class MainPanel extends AtmPanel{
     	            		"Your can only have one security account!", 
     	            		"Request Failed", JOptionPane.ERROR_MESSAGE);
     			}
+    			else if (panelName.equals("openopt")&&(n==2)
+    					&&customer.getSavingsAccounts().size()==0) {
+	        		JOptionPane.showMessageDialog(null, 
+	        			"You do not have a savings account!", "Request Failed", JOptionPane.ERROR_MESSAGE);
+	        }
     			else {
     				buttonLinks[n].setDate(date);
     				buttonLinks[n].setCustomer(customer);
@@ -1213,8 +1251,14 @@ public class MainPanel extends AtmPanel{
 					if (shares<=0) {
 						requestFailMsg();
 					}
-		    			else
-		    				transactions();
+		    			else {
+		    				int response = JOptionPane.showConfirmDialog(null, 
+		    						"$"+CommonMathMethod.twoDecimal(shares*stock.getUSDPrice())+" in total, yes to purchase!", "Buy Stocks", 0);
+		    		        if (response == JOptionPane.YES_OPTION) {
+		    		        		dealshares = shares;
+		    		        		transactions();
+		    		        }
+		    			}
 				}catch (Exception e) {
 					requestFailMsg();
 				}
@@ -1237,8 +1281,13 @@ public class MainPanel extends AtmPanel{
     					if (shares<=0) {
     						requestFailMsg();
     					}
-    		    			else if (quickVerify()) {
-    		    				//stock.sell
+    		    			else {
+    		    				int response = JOptionPane.showConfirmDialog(null, 
+    		    						"$"+CommonMathMethod.twoDecimal(shares*stock.getUSDPrice())+" in total, yes to sell!", "Sell Stocks", 0);
+    		    		        if (response == JOptionPane.YES_OPTION) {
+    		    		        		dealshares = shares;
+    		    		        		transactions();
+    		    		        }
     		    			}
     				}catch (Exception e) {
     					requestFailMsg();
@@ -1267,7 +1316,10 @@ public class MainPanel extends AtmPanel{
     				else {
         				setStock(bank.getStocks().get(stockname));
     				}
-    				super.forward();
+				if (radio2.isSelected())
+    					super.forward();
+				else
+					super.link();
     			}
     			else
     				noStockMsg();

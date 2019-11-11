@@ -182,12 +182,12 @@ public class PWPanel extends AtmPanel{
 			pwField.setBounds(260, 290, 280, 50);
 			confField.setBounds(260, 360, 280, 50);
 			next.setBounds(410, 440, 125, 60);
-	        JLabel jLabelHint1 = new JLabel("If you have a savings deposit of more than 1000, ");
-	        JLabel jLabelHint2 = new JLabel("you can open a security account");
+	        JLabel jLabelHint1 = new JLabel("If you have at least one savings account, you can open");
+	        JLabel jLabelHint2 = new JLabel("a security account");
 	        JLabel jLabelHint3 = new JLabel("You can buy and sell stocks with this account");
 	        JLabel jLabelHint4 = new JLabel("One user can only open one security account");
-	        jLabelHint1.setBounds(190, 110, 600, 60);
-	        jLabelHint2.setBounds(260, 135, 600, 60);
+	        jLabelHint1.setBounds(170, 110, 600, 60);
+	        jLabelHint2.setBounds(320, 135, 600, 60);
 	        jLabelHint3.setBounds(200, 175, 600, 60);
 	        jLabelHint4.setBounds(200, 215, 600, 60);
 	        jLabelHint1.setForeground(Color.gray);

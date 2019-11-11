@@ -64,12 +64,12 @@ public class SecurityAccount extends Account {
         currency, saving account, 
         Stockname, shares
     */                
-    public void buyStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
+    public int buyStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
         Stock bankStock = bank.getStocks().get(name);
 
         if (shares > bankStock.getShares()) {
-            System.out.println("Cannot buy more than bank's inventory!");
-            return;
+            //System.out.println("Cannot buy more than bank's inventory!");
+            return -1;
         }
 
         double amount = 0;
@@ -83,7 +83,8 @@ public class SecurityAccount extends Account {
         }
         
         if (account.getDeposit(currency) < amount) {
-            System.out.println("Saving account money insufficient!");
+            //System.out.println("Saving account money insufficient!");
+            return 1;
         }
         else {
             // update owner stocks
@@ -111,12 +112,13 @@ public class SecurityAccount extends Account {
             Database.updateData(stockTableName, "STOCK_NAME", name, updateBankArgs , updateBankValues);
             
         }
+        return 0;
     }
 
-    public void sellStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
+    public int sellStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
         if (shares > stocks.get(name).shares) {
-            System.out.println("Cannot sell more than current biggest shares");
-            return;
+            //System.out.println("Cannot sell more than current biggest shares");
+            return -1;
         }
         
         // add money on saving account
@@ -134,10 +136,11 @@ public class SecurityAccount extends Account {
         String[] updateStockValues = {name};
         Database.updateData(stockTableName, "SHARE",
                 "SHARE + " + shares, updateStockArgs, updateStockValues);
+        return 0;
     }
     
     public String toString() {
-    		return type + " - " + number;
+    		return type.toString();
     }
     
     public String[][] stockTable(){
