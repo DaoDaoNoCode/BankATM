@@ -36,13 +36,16 @@ public class SecurityAccount extends Account {
     }
 
     public HashMap<String, Stock> getStocks() {
-        HashMap<String, Stock> bankStocks = bank.getStocks();
+        return stocks;
+    }
+    
+    public void setStocks() {
+    		HashMap<String, Stock> bankStocks = bank.getStocks();
         for (StockDeal stockDeal : stockDeals.values()) {
             String stockName = stockDeal.getStock();
             Stock stock = new Stock(stockName, bankStocks.get(stockName).getUSDPrice(), stockDeal.getShares(), bankStocks.get(stockName).getChange());
             stocks.put(stockName, stock);
         }
-        return stocks;
     }
 
     private void readStocksBoughtFromDatabase() {
@@ -59,6 +62,7 @@ public class SecurityAccount extends Account {
                 this.stockDeals.put(stockDeal.get(0), new StockDeal(stockDeal.get(0), stockDeal.get(1), stockName, shares));
             }
         }
+        setStocks();
     }
 
     /* 
@@ -116,6 +120,8 @@ public class SecurityAccount extends Account {
                 StockDeal stockDeal = new StockDeal(number, name, shares);
                 stockDeals.put(stockDeal.getDeal_ID(), stockDeal);
             }
+            
+            setStocks();
 
             // reduce money on saving account
             account.buyStock(amount, fee, currency, date);
@@ -160,7 +166,7 @@ public class SecurityAccount extends Account {
                 // update owner stocks
                 stockDeal.sellShares(shares);
                 int newShare = stockDeal.getShares();
-                stocks.get(name).setShares(newShare);
+                setStocks();
                 if (newShare == 0) {
                     stockDeals.remove(stockDeal.getDeal_ID());
                     Database.deleteData(stockDealTableName, stockDealPrimaryKey, stockDeal.getDeal_ID());
@@ -188,7 +194,6 @@ public class SecurityAccount extends Account {
     }
 
     public String[][] stockTable() {
-        HashMap<String, Stock> stocks = getStocks();
         String[][] table = new String[stocks.size()][4];
         int i = 0;
         for (StockDeal stockDeal : stockDeals.values()) {
@@ -203,7 +208,7 @@ public class SecurityAccount extends Account {
     }
 
     public boolean hasStock(String stockName) {
-        if (stockDeals.get(stockName) != null)
+        if (stocks.get(stockName) != null)
             return true;
         return false;
     }

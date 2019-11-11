@@ -36,10 +36,10 @@ public class Bank {
     private HashMap<String, Stock> stocks;
 
     public Bank() {
+    		readBankerFromDatabase();
+    		readStockFromDatabase();
         readCustomerFromDatabase();
         readTransactionFromDatabase();
-        readStockFromDatabase();
-        readBankerFromDatabase();
     }
 
     public void setDate(Date date) {
@@ -291,7 +291,7 @@ public class Bank {
             if (customer.getSecurityAccounts() != null
                     && customer.getSecurityAccounts().hasStock(stockName)) {
                 String[] line = {customer.toString(),
-                        String.valueOf(customer.getSecurityAccounts().getStockDeals().get(stockName).getShares())};
+                        String.valueOf(customer.getSecurityAccounts().getStocks().get(stockName).getShares())};
                 tableList.add(line);
             }
         }
