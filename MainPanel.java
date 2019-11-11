@@ -123,7 +123,7 @@ public class MainPanel extends AtmPanel{
 			break;
 		}
 		case "security":{//view security
-			String[] names = {"View Stocks", "Cloce Account"};
+			String[] names = {"View Stocks", "Close Account"};
 			int[] sizes = {17, 17};
 			buttonNum = 2;
 			setButtons(names, sizes, 2);
@@ -814,7 +814,7 @@ public class MainPanel extends AtmPanel{
 			} catch (Exception e) {
 				requestFailMsg();
 			}
-    		}
+		}
     }
     private boolean quickVerify() {//verify password
     		JPasswordField jPasswordFieldPassword = new JPasswordField(15);
