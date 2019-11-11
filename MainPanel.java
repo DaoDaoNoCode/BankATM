@@ -123,17 +123,17 @@ public class MainPanel extends AtmPanel{
 			break;
 		}
 		case "security":{//view security
-			String[] names = {"View Stocks", "Close Account"};
+			String[] names = {"View Stocks", "Cloce Account"};
 			int[] sizes = {17, 17};
 			buttonNum = 2;
 			setButtons(names, sizes, 2);
 			buttons[1].setBackground(Color.gray);
 			showName();
-			setTitle("SECURITY");
+			setTitle("Security Account");
 			break;
 		}
 		case "stocks":{
-			this.setRadio("All Stocks", "Holding Shares");
+			setRadio("Holding Shares", "All Stocks");
 			Object[][] context = {};
 			String[] column = {"Name", "Price", "Change", "Shares"};
 			data = new DefaultTableModel(context, column);
@@ -243,9 +243,17 @@ public class MainPanel extends AtmPanel{
 			next.addActionListener(newListener);
 			break;
 		}
-		case "inquiry":{
+		case "transactions":{
 			setTitle("Recent Transactions");
 			showBalance();
+			record = new JTextArea();
+			jsp = new JScrollPane(record);
+			showTransactions();
+			break;
+		}
+		case "securitytrans":{
+			setTitle("Recent Transactions");
+			showName();
 			record = new JTextArea();
 			jsp = new JScrollPane(record);
 			showTransactions();
@@ -318,28 +326,27 @@ public class MainPanel extends AtmPanel{
 
 		name.setBounds(30, 110, 200, 100);
 		name.setFont(new Font("calibri",Font.BOLD, 20));
-		name.setForeground(Color.gray);
 		name.setFocusable(false);
 		usd.setBounds(30, 150, 200, 100);
 		usd.setFont(new Font("calibri",Font.BOLD, 15));
 		usd.setFocusable(false);
+		usd.setForeground(Color.gray);
 		labels[0].setBounds(30, 180, 200, 100);
 		labels[0].setFont(new Font("calibri",Font.BOLD, 20));
-		labels[0].setForeground(Color.gray);
 		labels[0].setFocusable(false);
 		cny.setBounds(30, 215, 200, 100);
 		cny.setFont(new Font("calibri",Font.BOLD, 15));
 		cny.setFocusable(false);
+		cny.setForeground(Color.gray);
 		labels[1].setBounds(30, 245, 200, 100);
 		labels[1].setFont(new Font("calibri",Font.BOLD, 20));
-		labels[1].setForeground(Color.gray);
 		labels[1].setFocusable(false);
 		eur.setBounds(30, 280, 200, 100);
 		eur.setFont(new Font("calibri",Font.BOLD, 15));
 		eur.setFocusable(false);
+		eur.setForeground(Color.gray);
 		labels[2].setBounds(30, 310, 200, 100);
 		labels[2].setFont(new Font("calibri",Font.BOLD, 20));
-		labels[2].setForeground(Color.gray);
 		labels[2].setFocusable(false);
 
 		bg.add(name);
@@ -436,19 +443,15 @@ public class MainPanel extends AtmPanel{
 
 		name.setBounds(30, 110, 200, 100);
 		name.setFont(new Font("calibri",Font.BOLD, 20));
-		name.setForeground(Color.gray);
 		name.setFocusable(false);
-		labels[0].setBounds(30, 150, 200, 100);
+		labels[0].setBounds(30, 180, 200, 100);
 		labels[0].setFont(new Font("calibri",Font.BOLD, 20));
-		labels[0].setForeground(Color.gray);
 		labels[0].setFocusable(false);
-		labels[1].setBounds(75, 150, 200, 100);
-		labels[1].setFont(new Font("calibri",Font.BOLD, 20));
-		labels[1].setForeground(Color.gray);
+		labels[1].setBounds(130, 182, 200, 100);
+		labels[1].setFont(new Font("calibri",Font.BOLD, 15));
 		labels[1].setFocusable(false);
-		labels[2].setBounds(30, 215, 200, 100);
+		labels[2].setBounds(30, 245, 200, 100);
 		labels[2].setFont(new Font("calibri",Font.BOLD, 20));
-		labels[2].setForeground(Color.gray);
 		labels[2].setFocusable(false);
 
 		bg.add(name);
@@ -456,12 +459,18 @@ public class MainPanel extends AtmPanel{
 		bg.add(labels[1]);
 		bg.add(labels[2]);
 		
-
 		JLabel shares = new JLabel("Shares");
-		shares.setBounds(30, 185, 200, 100);
+		JLabel price = new JLabel("Price");
+		price.setBounds(30, 150, 200, 100);
+		price.setFont(new Font("calibri",Font.BOLD, 15));
+		price.setForeground(Color.gray);
+		price.setFocusable(false);
+		shares.setBounds(30, 215, 200, 100);
 		shares.setFont(new Font("calibri",Font.BOLD, 15));
+		shares.setForeground(Color.gray);
 		shares.setFocusable(false);
 		bg.add(shares);
+		bg.add(price);
 		
 		if (stock!=null)
 			resetStocks();
@@ -469,13 +478,17 @@ public class MainPanel extends AtmPanel{
 	}
 	
 	//reset functions
+	public void resetRadio() {
+		if (!radio1.isSelected() && !radio2.isSelected())
+			radio1.setSelected(true);
+	}
 	private void resetTransactions() {
 		record.setText("");
         ArrayList<Transaction> transactions = account.getTransactions();
         transactions.sort(new Comparator<Transaction>() {
             @Override
             public int compare(Transaction o1, Transaction o2) {
-                return o1.getID() - o2.getID();
+                return o1.getDate().compareTo(o2.getDate());
             }
         });
         for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -489,7 +502,7 @@ public class MainPanel extends AtmPanel{
 		transactions.sort(new Comparator<Transaction>() {
 			@Override
 			public int compare(Transaction o1, Transaction o2) {
-				return o1.getID() - o2.getID();
+				return o1.getDate().compareTo(o2.getDate());
 			}
 	 	});
 		for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -499,6 +512,7 @@ public class MainPanel extends AtmPanel{
 	}
 	private void resetEarned() {
 		name.setText("Total Earned");
+		name.setForeground(Color.GRAY);
         HashMap<Currency, Double> moneyEarned = bank.calculateMoneyEarned();
         int i = 0;
         for (Currency currency : Currency.values()) {
@@ -591,17 +605,18 @@ public class MainPanel extends AtmPanel{
 		}
 	}
 	private void resetStocks() {
-		setTitle(stock.getName()+" "+format.format(date));
+		setTitle(stock.getName()+"  "+format.format(date));
+		name.setText(stock.getName());
 		labels[0].setText("$"+stock.getUSDPrice());
 		labels[1].setText(stock.getChange()*100+"%");
 		labels[2].setText(String.valueOf(stock.getShares()));
 		if (stock.getChange()>0)
-			label2.setForeground(Color.decode("#32CD32"));
+			labels[1].setForeground(Color.decode("#32CD32"));
 		else if (stock.getChange()<0)
-			label2.setForeground(Color.decode("#EE5C42"));
+			labels[1].setForeground(Color.decode("#EE5C42"));
 		else {
-			label2.setText("0.00%");
-			label2.setForeground(Color.gray);
+			labels[1].setText("0.00%");
+			labels[1].setForeground(Color.gray);
 		}
 	}
 	private void resetTable() {
@@ -817,7 +832,7 @@ public class MainPanel extends AtmPanel{
 			} catch (Exception e) {
 				requestFailMsg();
 			}
-		}
+    		}
     }
     private boolean quickVerify() {//verify password
     		JPasswordField jPasswordFieldPassword = new JPasswordField(15);
@@ -846,25 +861,98 @@ public class MainPanel extends AtmPanel{
     		}
 		return false;
     }
-    public double inputAmount() {//0 < input amount < billion
-		double result = 0;
-		String inputValue = JOptionPane.showInputDialog("Enter Amount");
-		if (inputValue.length() == 0) {
-			noInputMsg(); 
-		}
-		else {
+    public void setStocks() {
+		JPanel panel1 = new JPanel();
+		JPanel panel2 = new JPanel();
+		JPanel panel3 = new JPanel();
+        JTextField amountField = new JTextField(10);
+        JTextField shareField = new JTextField(10);
+        JPasswordField bankerPWField = new JPasswordField(10);
+        panel1.add(Box.createHorizontalStrut(15));
+        panel1.add(new JLabel("New Price: "));
+        panel1.add(amountField);
+        panel1.add(Box.createHorizontalStrut(15));
+        panel1.add(new JLabel("New Shares: "));
+        panel1.add(shareField);
+        panel2.add(Box.createHorizontalStrut(15));
+        panel2.add(new JLabel("Password: "));
+        panel2.add(bankerPWField);
+        
+        JTabbedPane jTabbedPane = new JTabbedPane();
+        jTabbedPane.addTab("Update Stock", panel1);
+        jTabbedPane.addTab("Remove Stock", panel2);
+
+		int result = JOptionPane.showConfirmDialog(null, jTabbedPane,
+				"Set Stock", JOptionPane.OK_CANCEL_OPTION);
+		if (result == JOptionPane.OK_OPTION) {
 			try {
-				result = Double.parseDouble(inputValue);
+				if (jTabbedPane.getSelectedIndex()==0) {
+					if (amountField.getText().length() > 0) {
+						double price = Double.parseDouble(amountField.getText());
+						if (price > 0){
+							stock.setPrice(price);
+						}
+						else {
+							requestFailMsg();
+							return;
+						}
+					}
+					if (shareField.getText().length() > 0) {
+						int shares = Integer.parseInt(shareField.getText());
+						if (shares>0) {
+							if (shares > stock.getShares()) {
+								bank.addStockShare(stock.getName(), shares-stock.getShares());
+							}
+							else if (shares < stock.getShares()) {
+								bank.reduceStockShare(stock.getName(), stock.getShares()-shares);
+							}
+							else if (amountField.getText().length() == 0){
+	    							JOptionPane.showMessageDialog(null, 
+	    									"No change made!", "Update Stock", JOptionPane.INFORMATION_MESSAGE);
+	    							return;
+							}
+						}
+						else {
+							requestFailMsg();
+							return;
+						}
+					}
+					if (amountField.getText().length()==0 && shareField.getText().length()==0) {
+						JOptionPane.showMessageDialog(null, 
+								"No change made!", "Update Shares", JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+					JOptionPane.showMessageDialog(null, 
+							"Stock price and shares updated!", "Update Stock", JOptionPane.INFORMATION_MESSAGE);
+					reset();
+				}
+				else if (jTabbedPane.getSelectedIndex()==1) {
+					String password = String.valueOf(bankerPWField.getPassword());
+					if (password.length() == 0)
+						noPWMsg();
+					else if (!password.equals(bank.getBankerPW())) {
+						wrongPWMsg();
+					}
+					else {
+						if (bank.deleteStock(stock.getName())) {
+							super.backward();
+						}
+						else {
+	    						JOptionPane.showMessageDialog(null, 
+	    								"Cannot remove a stock with shares!", "Request Failed", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
 			}
 			catch(Exception e) {
 				requestFailMsg();
 			}
 		}
-		return result;
     }
     public void newStocks() {
     		JTextField jTextFieldName = new JTextField(10);
     		JTextField jTextFieldPrice = new JTextField(10);
+    		JTextField jTextFieldShares = new JTextField(10);
     		JPanel jPanel = new JPanel();
 
     		jPanel.add(Box.createHorizontalStrut(15)); // a spacer
@@ -873,6 +961,9 @@ public class MainPanel extends AtmPanel{
     		jPanel.add(Box.createHorizontalStrut(15)); // a spacer
     		jPanel.add(new JLabel("Price: "));
     		jPanel.add(jTextFieldPrice);
+    		jPanel.add(Box.createHorizontalStrut(15)); // a spacer
+    		jPanel.add(new JLabel("Shares: "));
+    		jPanel.add(jTextFieldShares);
     		
     		int result = JOptionPane.showConfirmDialog(null, jPanel,
     				"Add New Stock", JOptionPane.OK_CANCEL_OPTION);
@@ -880,7 +971,8 @@ public class MainPanel extends AtmPanel{
     			try {
     				String stockname = jTextFieldName.getText();
     				double price = Double.parseDouble(jTextFieldPrice.getText());
-    				if (stockname.length() == 0 || (price <= 0)) {
+    				int shares = Integer.parseInt(jTextFieldShares.getText());
+    				if (stockname.length() == 0 || (price <= 0) || (shares<=0)) {
     					requestFailMsg();
     				}
     				else if (bank.getStocks().get(stockname)!=null) {
@@ -888,7 +980,7 @@ public class MainPanel extends AtmPanel{
 	                    		"This stock already exists!", "Request Failed", JOptionPane.ERROR_MESSAGE);
     				}
     				else {
-    					bank.addNewStock(stockname, price, 0, 0);
+    					bank.addNewStock(stockname, price, shares, 0);
     					JOptionPane.showMessageDialog(null, 
 	                    		"Add new stock success!", "Add New Stock", JOptionPane.INFORMATION_MESSAGE);
     				}
@@ -925,7 +1017,7 @@ public class MainPanel extends AtmPanel{
 
 				String[] args = {"DATE"};
 
-				Database.updateData("BANKER","USERNAME", "admin", args, updateValues);
+				Database.updateData("BANKER","USERNAME", bank.getBankerName(), args, updateValues);
 				date = bank.getDate();
 				System.out.println(formatter.format(date));
 
@@ -938,7 +1030,7 @@ public class MainPanel extends AtmPanel{
     				newStocks();
     			}
     			else if ((panelName.equals("view")&&(n==3))
-    					||(panelName.equals("security")&&(n==1))) {
+    					||(panelName.equals("security")&&(n==2))) {
         			closeAccount();
         			super.backward();
         		}
@@ -993,17 +1085,20 @@ public class MainPanel extends AtmPanel{
 		if (panelName.equals("main")||panelName.equals("loans")
 				||panelName.equals("transfer")||panelName.equals("openopt")
 				||panelName.equals("select")||panelName.equals("security")
-				||panelName.equals("stocks"))
+				||panelName.equals("stocks")||panelName.equals("securitytrans"))
 			resetName();
 		else if (panelName.equals("deposit")||panelName.equals("withdraw")
-				||panelName.equals("inquiry")||panelName.equals("view"))
+				||panelName.equals("transactions")||panelName.equals("view"))
     			resetBalance();
     		else if (panelName.equals("manager")||panelName.equals("daily")
     				||panelName.equals("accounts")||panelName.equals("viewstocks"))
     			resetEarned();
+		if (panelName.equals("stocks")||panelName.equals("loans")
+				||panelName.equals("accounts"))
+			resetRadio();
     		if (panelName.equals("transfer"))
     			resetTransfer();
-    		if (panelName.equals("inquiry")) {
+    		if (panelName.equals("transactions")||panelName.equals("securitytrans")) {
     			resetTransactions();
     		}
     		if (panelName.equals("loans")||panelName.equals("select")) {
@@ -1143,7 +1238,34 @@ public class MainPanel extends AtmPanel{
     			}
     		}
     		else if (panelName.equals("viewstocks")){
-    			//stock.setprice(input());
+    			if (table.getSelectedRow()>-1) {
+    				String stockname = table.getValueAt(table.getSelectedRow(), 0).toString();
+    				setStock(bank.getStocks().get(stockname));
+    				super.forward();
+    			}
+    			else
+    				noStockMsg();
+    		}
+    		else if (panelName.equals("stocks")) {
+    			if (table.getSelectedRow()>-1) {
+					String stockname = table.getValueAt(table.getSelectedRow(), 0).toString();
+				if (!radio1.isSelected() && !radio2.isSelected()) {
+    	            		noStockMsg();
+					return;
+				}
+				else if (radio1.isSelected()) {
+    					setStock(customer.getSecurityAccounts().getStocks().get(stockname));
+    				}
+    				else {
+        				setStock(bank.getStocks().get(stockname));
+    				}
+    				super.forward();
+    			}
+    			else
+    				noStockMsg();
+    		}
+    		else if (panelName.equals("setstocks")) {
+    			setStocks();
     		}
     		else
     			super.forward();
@@ -1160,12 +1282,12 @@ public class MainPanel extends AtmPanel{
     }
     private void noAccountMsg() {
 		JOptionPane.showMessageDialog(null,
-				"Please select an account."
+				"Please select an account!"
 				,"Request Failed", JOptionPane.ERROR_MESSAGE); 
     }
     private void requestFailMsg() {
     		JOptionPane.showMessageDialog(null,
-				"Invalid input.",
+				"Invalid input!",
 				"Request Failed", JOptionPane.ERROR_MESSAGE);
     }
     private void wrongPWMsg() {
@@ -1187,5 +1309,10 @@ public class MainPanel extends AtmPanel{
     		JOptionPane.showMessageDialog(null, 
 				"No enough money!", 
 				"Request Failed", JOptionPane.ERROR_MESSAGE);
+    }
+    private void noStockMsg() {
+		JOptionPane.showMessageDialog(null, 
+			"Please select a stock!", 
+			"Request Failed", JOptionPane.ERROR_MESSAGE);
     }
 }

@@ -50,8 +50,19 @@ public class Bank {
 
     private final String stockPrimaryKey = "STOCK_NAME";
 
-    private  final String bankerPrimaryKey = "USERNAME";
+    private final String bankerPrimaryKey = "USERNAME";
+    
+    private final String bankerName = "admin";
+    
+    private final String bankerPW = "admin";
 
+    public Bank() {
+        readCustomerFromDatabase();
+        readTransactionFromDatabase();
+        readStockFromDatabase();
+        readBankerFromDatabase();
+    }
+    
     public Date getDate() {
         List<List<String>> bankers = Database.queryData(bankerTableName, null, null, bankerArgs);
         for (List<String> banker : bankers) {
@@ -64,12 +75,7 @@ public class Bank {
         }
         return new Date();
     }
-    public Bank() {
-        readCustomerFromDatabase();
-        readTransactionFromDatabase();
-        readStockFromDatabase();
-        readBankerFromDatabase();
-    }
+    
     private String getDateString(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
         return formatter.format(date);
@@ -114,17 +120,17 @@ public class Bank {
             }
         }
     }
+    
     private void readBankerFromDatabase() {
         if (!Database.hasTable(bankerTableName)) {
             Database.createTable(bankerTableName, bankerCreateArgs);
             Database.setPrimaryKey(bankerTableName, bankerPrimaryKey);
         }
         else {
-
             List<List<String>> bankers = Database.queryData(bankerTableName, null, null, bankerArgs);
             if (bankers.size() == 0) {
                 date = new Date();
-                String[] values = {"admin", "admin", getDateString(date)};
+                String[] values = {bankerName, bankerPW, getDateString(date)};
                 System.out.println(getDateString(date));
                 Database.insertData(bankerTableName, values);
             }
@@ -141,10 +147,12 @@ public class Bank {
             }
         }
     }
+    
     private  void initializeStock(String name, double price, int shares, double change) {
         String[] insertArgs = {name, Double.toString(price), Integer.toString(shares), Double.toString(change) };
         Database.insertData(stockTableName, insertArgs);
     }
+    
     private void readStockFromDatabase() {
         stocks = new HashMap<>();
         if (!Database.hasTable(stockTableName)) {
@@ -187,6 +195,14 @@ public class Bank {
 
     public void addTransaction(Transaction transaction) {
         bankerTransactions.add(transaction);
+    }
+    
+    public String getBankerName() {
+    		return this.bankerName;
+    }
+    
+    public String getBankerPW() {
+    		return this.bankerPW;
     }
 
     public void deleteCustomer(Customer customer) {
@@ -273,14 +289,15 @@ public class Bank {
         }
         return res;
     }
-    public void deleteStock(String name) {
+    public boolean deleteStock(String name) {
         if (stocks.get(name).shares > 0) {
-            System.out.println("cannot delete a stock with positive shares");
+            return false;
         } 
         else {
             // delete table
             stocks.remove(name);
             Database.deleteData(stockTableName, stockPrimaryKey, stocks.get(name).getName());
+            return true;
         }
     }
 

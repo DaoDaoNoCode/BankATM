@@ -17,8 +17,6 @@ public class PWPanel extends AtmPanel{
 	protected AtmPWField pwField = new AtmPWField("Enter Password");
 	protected AtmPWField confField = new AtmPWField("Confirm Password");
 	
-	private String managerPW = "admin";
-	private String managerID = "admin";
     private final SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy");
 	public PWPanel(AtmFrame newFrame, Bank newBank, Date newDate) {
 		super(newFrame, newBank, newDate);
@@ -216,7 +214,7 @@ public class PWPanel extends AtmPanel{
 	public void forward() {
 		switch(panelName) {
 		case "ManagerLogin":{
-			if (pwField.getPW().equals(managerPW) && idField.getText().equals(managerID)) {
+			if (pwField.getPW().equals(bank.getBankerPW()) && idField.getText().equals(bank.getBankerName())) {
 				super.forward();
 			}
 			else
