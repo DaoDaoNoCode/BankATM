@@ -22,6 +22,7 @@ public class Initializer {
 	MainPanel newLoans;
 	MainPanel newCustomerTrans;
 	MainPanel newBankerTrans;
+	MainPanel newViewLoans;
 	//MainPanel newSecurityTrans;
 	MainPanel newManager;
 	MainPanel newDaily;
@@ -58,6 +59,7 @@ public class Initializer {
 		newLoans = new MainPanel("loans", newFrame, newBank, newDate);
 		newCustomerTrans = new MainPanel("transactions", newFrame, newBank, newDate);
 		newBankerTrans = new MainPanel("transactions", newFrame, newBank, newDate);
+		newViewLoans = new MainPanel("viewloans", newFrame, newBank, newDate);
 		//newSecurityTrans = new MainPanel("securitytrans", newFrame, newBank, newDate);
 		newManager = new MainPanel("manager", newFrame, newBank, newDate);
 		newDaily = new MainPanel("daily", newFrame, newBank, newDate);
@@ -95,9 +97,11 @@ public class Initializer {
 		newManager.setLinkButton(newManager, 5);
 		newManager.setBack(newStart);
 		newAccounts.setFore(newBankerTrans);
+		newAccounts.setLink(newViewLoans);
 		newAccounts.setBack(newManager);
 		newDaily.setBack(newManager);
 		newBankerTrans.setBack(newAccounts);
+		newViewLoans.setBack(newAccounts);
 		newViewStocks.setBack(newManager);
 		newViewStocks.setFore(newSetStocks);
 		newSetStocks.setBack(newViewStocks);

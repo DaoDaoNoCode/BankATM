@@ -274,6 +274,21 @@ public class MainPanel extends AtmPanel{
 			showTransactions();
 			break;
 		}
+		case "viewloans":{
+			setTitle("View Loans");
+			showBalance();
+			Object[][] context = {};
+			String[] column = {"Currency", "Loan", "Interest"};
+			data = new DefaultTableModel(context, column) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};;
+			table = new JTable(data);
+			jsp = new JScrollPane(table);
+			setTable();
+		}
 		case "securitytrans":{
 			setTitle("Recent Transactions");
 			showName();
@@ -654,6 +669,12 @@ public class MainPanel extends AtmPanel{
 		else if (panelName.equals("setstocks")){
 			String[][] newContent = bank.holderTable(stock.getName());
 			String[] column = {"Holder", "Shares"};
+			data.setDataVector(newContent, column);
+		}
+		else if (panelName.equals("viewloans")) {
+			SavingsAccount savings = (SavingsAccount) account;
+			String[][] newContent = savings.loanTable();
+			String[] column = {"Currency", "Loan", "Interest"};
 			data.setDataVector(newContent, column);
 		}
 		else {
@@ -1071,7 +1092,7 @@ public class MainPanel extends AtmPanel{
     				newStocks();
     			}
     			else if ((panelName.equals("view")&&(n==3))
-    					||(panelName.equals("security")&&(n==2))) {
+    					||(panelName.equals("security")&&(n==1))) {
         			closeAccount();
         			super.backward();
         		}
@@ -1134,7 +1155,8 @@ public class MainPanel extends AtmPanel{
 				||panelName.equals("stocks")||panelName.equals("securitytrans"))
 			resetName();
 		else if (panelName.equals("deposit")||panelName.equals("withdraw")
-				||panelName.equals("transactions")||panelName.equals("view"))
+				||panelName.equals("transactions")||panelName.equals("view")
+				||panelName.equals("viewloans"))
     			resetBalance();
     		else if (panelName.equals("manager")||panelName.equals("daily")
     				||panelName.equals("accounts")||panelName.equals("viewstocks"))
@@ -1156,15 +1178,16 @@ public class MainPanel extends AtmPanel{
     		if (panelName.equals("accounts")) {
     			resetAccounts();
     		}
-    		if (panelName.equals("buystocks") || panelName.equals("sellstocks")
+    		if (panelName.equals("buystocks")||panelName.equals("sellstocks")
     				|| panelName.equals("setstocks")) {
     			resetStocks();
     		}
-    		if (panelName.equals("buystocks") || panelName.equals("sellstocks")) {
+    		if (panelName.equals("buystocks")||panelName.equals("sellstocks")) {
     			resetSelect();
     			enter.setText("");
     		}
-    		if (panelName.equals("stocks") || panelName.equals("viewstocks")) {
+    		if (panelName.equals("stocks")||panelName.equals("viewstocks") 
+    				||panelName.equals("viewloans")||panelName.equals("setstocks")) {
     			resetTable();
     		}
     }
@@ -1227,7 +1250,10 @@ public class MainPanel extends AtmPanel{
         			if (account != null && customer != null) {
         				setAccount(account);
             			setCustomer(customer);
-        				super.forward();
+            			if (radio1.isSelected())
+            				super.forward();
+            			else
+            				super.link();
         			}
         			else {
         				noAccountMsg();
