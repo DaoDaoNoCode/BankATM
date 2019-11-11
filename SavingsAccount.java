@@ -142,4 +142,13 @@ public class SavingsAccount extends Account {
     public String toString() {
         return type + " - " + number;
     }
+    public String[][] loanTable(){
+    		String[][] table = new String[3][3];
+    		for (int i = 0; i < Currency.values().length; i++) {
+    			table[i][0] = Currency.values()[i].toString();
+    			table[i][1] = String.valueOf(this.getLoan(Currency.values()[i]));
+    			table[i][2] = String.valueOf(this.getLoanInterest(Currency.values()[i]));
+    		}
+    		return table;
+    }
 }

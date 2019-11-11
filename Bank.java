@@ -294,7 +294,7 @@ public class Bank {
         else {
             // delete table
             stocks.remove(name);
-            Database.deleteData(stockTableName, stockPrimaryKey, stocks.get(name).getName());
+            Database.deleteData(stockTableName, stockPrimaryKey, name);
             return true;
         }
     }

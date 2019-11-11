@@ -30,6 +30,7 @@ public class SecurityAccount extends Account {
         super(bank, owner, password, date);
         type = AccountType.SECURITY;
         stocks = new HashMap<>();
+        readStocksBoughtFromDatabase();
     }
     public HashMap<String, Stock> getStocks() {
         return this.stocks;
@@ -90,11 +91,12 @@ public class SecurityAccount extends Account {
             // update owner stocks
             if (stocks.containsKey(name)) {
                 stocks.get(name).buyShares(shares);
-                stockDeals.get(name).setShares(stockDeals.get(name).getShares() + shares);
+                int newShare = stocks.get(name).getShares() + shares;
+                stockDeals.get(name).setShares(newShare);
 
                 // Simply update the shares that a client has
                 String[] updateArgs = {"STOCK_SHARE"};
-                String[] updateValues = {"STOCK_SHARE + " + shares};
+                String[] updateValues = {String.valueOf(newShare)};
                 Database.updateData(stockDealTableName, "DEAL_ID",
                         stockDeals.get(name).getDeal_ID(), updateArgs, updateValues);
             } else {
@@ -108,7 +110,7 @@ public class SecurityAccount extends Account {
             // update bank stocks
             bankStock.sellShares(shares);
             String[] updateBankArgs = {"SHARE"};
-            String[] updateBankValues = {"SHARE - " + shares};
+            String[] updateBankValues = {String.valueOf(stocks.get(name).getShares())};
             Database.updateData(stockTableName, "STOCK_NAME", name, updateBankArgs , updateBankValues);
             
         }
