@@ -1,30 +1,23 @@
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 /**
  * This class represents a transaction in bank.
  */
 
 public class Transaction {
-	
-	private static final int TRANSACTION_NUMBER_LENGTH = 12;
 
-    private Date date;
-
-    private Currency currency;
-
-    private TransactionType transactionType;
-    
+    private static final int TRANSACTION_NUMBER_LENGTH = 12;
     private final String bankerTransactionTableName = "BANK_TRANSACTION";
-    
     private final String bankerTransactionPrimaryKey = "ID";
-
+    private Date date;
+    private Currency currency;
+    private TransactionType transactionType;
     private String customer; // customer's username
 
     private String account; // account number
-    
+
     private int ID;
 
     private double money;
@@ -60,57 +53,57 @@ public class Transaction {
         return this.money;
     }
 
+    public void setMoney(double money) {
+        this.money = money;
+    }
+
     public Date getDate() {
         return this.date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public TransactionType getTransactionType() {
         return this.transactionType;
     }
 
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
+
     public String getCustomer() {
-		return customer;
-	}
+        return customer;
+    }
 
-	public void setCustomer(String customer) {
-		this.customer = customer;
-	}
+    public void setCustomer(String customer) {
+        this.customer = customer;
+    }
 
-	public String getAccount() {
-		return account;
-	}
+    public String getAccount() {
+        return account;
+    }
 
-	public void setAccount(String account) {
-		this.account = account;
-	}
+    public void setAccount(String account) {
+        this.account = account;
+    }
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
-
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
-	}
-
-	public void setMoney(double money) {
-		this.money = money;
-	}
-
-	public Currency getCurrency() {
+    public Currency getCurrency() {
         return this.currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     public String getDateString() {
         SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
         return formatter.format(date);
     }
-    
+
     public int getID() {
-    	return this.ID;
+        return this.ID;
     }
 
     private void generateIDNumber() {
@@ -120,7 +113,7 @@ public class Transaction {
         int resultNum = Integer.valueOf(resultStr);
         this.ID = resultNum + 1;
     }
-    
+
     public String toString() {
         return " " + getDateString() + " | " + this.money + " " + this.currency + " | " + this.transactionType;
     }

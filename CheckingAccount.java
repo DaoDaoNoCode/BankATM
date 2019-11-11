@@ -1,4 +1,3 @@
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -23,10 +22,11 @@ public class CheckingAccount extends Account {
 
     /**
      * Transfer to another checking account. The fee rate is 1%.
-     * @param account account to transfer out
-     * @param money money to transfer out
+     *
+     * @param account  account to transfer out
+     * @param money    money to transfer out
      * @param currency currency to transfer out
-     * @param date date of transfer
+     * @param date     date of transfer
      * @return -1 if money input is invalid, 0 if deposit is not enough, 1 if transfer successfully
      */
     public int transferOut(CheckingAccount account, double money, Currency currency, Date date) {

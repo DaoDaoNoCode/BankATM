@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,39 +10,23 @@ import java.util.List;
 
 public class Customer {
 
-    private Bank bank;
-
-    private String username;
-
-    private String password;
-
-    private ArrayList<SavingsAccount> savingsAccounts;
-
-    private ArrayList<CheckingAccount> checkingAccounts;
-
-    private SecurityAccount securityAccount;
-
-    private ArrayList<Account> closedAccounts;
-
     private final String savingsAccountTableName = "SAVINGS_ACCOUNT";
-
     private final String checkingAccountTableName = "CHECKING_ACCOUNT";
-
     private final String securityAccountTableName = "SECURITY_ACCOUNT";
-
     private final String[] checkingAccountCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "OWNER varchar(20) not null", "PASSWORD varchar(20) not null", "USD_BALANCE varchar(20) not null", "CNY_BALANCE varchar(20) not null", "EUR_BALANCE varchar(20) not null", "DATE varchar(12) not null", "STATUS varchar(10) not null"};
-
     private final String[] savingsAccountCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "OWNER varchar(20) not null", "PASSWORD varchar(20) not null", "USD_BALANCE varchar(20) not null", "CNY_BALANCE varchar(20) not null", "EUR_BALANCE varchar(20) not null", "USD_LOAN varchar(20) not null", "CNY_LOAN varchar(20) not null", "EUR_LOAN varchar(20) not null", "USD_INTEREST varchar(20) not null", "CNY_INTEREST varchar(20) not null", "EUR_INTEREST varchar(20) not null", "DATE varchar(12) not null", "STATUS varchar(10) not null"};
-
     private final String[] securityAccountCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "OWNER varchar(20) not null", "PASSWORD varchar(20) not null", "DATE varchar(12) not null", "STATUS varchar(10) not null"};
-
-    private final String[] checkingAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "USD_BALANCE", "CNY_BALANCE", "EUR_BALANCE",  "DATE", "STATUS"};
-
+    private final String[] checkingAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "USD_BALANCE", "CNY_BALANCE", "EUR_BALANCE", "DATE", "STATUS"};
     private final String[] savingsAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "USD_BALANCE", "CNY_BALANCE", "EUR_BALANCE", "USD_LOAN", "CNY_LOAN", "EUR_LOAN", "USD_INTEREST", "CNY_INTEREST", "EUR_INTEREST", "DATE", "STATUS"};
-
     private final String[] securityAccountArgs = {"ACCOUNT_NUMBER", "OWNER", "PASSWORD", "DATE", "STATUS"};
-
     private final String accountPrimaryKey = "ACCOUNT_NUMBER";
+    private Bank bank;
+    private String username;
+    private String password;
+    private ArrayList<SavingsAccount> savingsAccounts;
+    private ArrayList<CheckingAccount> checkingAccounts;
+    private SecurityAccount securityAccount;
+    private ArrayList<Account> closedAccounts;
 
     public Customer(Bank bank, String username, String password) {
         this.bank = bank;
@@ -51,16 +34,22 @@ public class Customer {
         this.password = password;
         readAccountsFromDatabase();
     }
+
     public boolean checkSecurity() {
-        if(securityAccount == null) return false;
+        if (securityAccount == null) return false;
         else return true;
     }
+
     public String getUsername() {
         return this.username;
     }
 
     public String getPassword() {
         return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public ArrayList<SavingsAccount> getSavingsAccounts() {
@@ -70,17 +59,13 @@ public class Customer {
     public ArrayList<CheckingAccount> getCheckingAccounts() {
         return this.checkingAccounts;
     }
-    
+
     public SecurityAccount getSecurityAccounts() {
         return this.securityAccount;
     }
 
     public ArrayList<Account> getClosedAccounts() {
         return this.closedAccounts;
-    }
-    
-    public void setPassword(String password) {
-    		this.password = password;
     }
 
     private void readAccountsFromDatabase() {

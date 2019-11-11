@@ -1,4 +1,3 @@
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -51,9 +50,10 @@ public class SavingsAccount extends Account {
 
     /**
      * Request a loan.
-     * @param money money want to request
+     *
+     * @param money    money want to request
      * @param currency currency of the loan
-     * @param date loan date
+     * @param date     loan date
      * @return -1 if the loan has not been repaid, 0 if the money is invalid, 1 if request a loan successfully
      */
     public int requestLoan(double money, Currency currency, Date date) {
@@ -77,6 +77,7 @@ public class SavingsAccount extends Account {
 
     /**
      * Calculate the interest of loan at a daily rate 0.1%.
+     *
      * @param date the current date
      */
     public void calculateLoanInterest(Date date) {
@@ -95,8 +96,9 @@ public class SavingsAccount extends Account {
 
     /**
      * Loan can only be repaid by the same account.
+     *
      * @param currency repay currency
-     * @param date repay date
+     * @param date     repay date
      * @return -1 if there is no loan, 0 if the money is not enough, 1 if repay successfully
      */
     public int repayLoan(Currency currency, Date date) {
@@ -125,6 +127,7 @@ public class SavingsAccount extends Account {
             }
         }
     }
+
     protected void updateLoanInDatabase(Currency currency) {
         String tableName = "SAVINGS_ACCOUNT";
         String[] args;
@@ -138,18 +141,20 @@ public class SavingsAccount extends Account {
         String[] updateValues = {loan.get(currency).toString(), loanInterest.get(currency).toString()};
         Database.updateData(tableName, "ACCOUNT_NUMBER", number, args, updateValues);
     }
+
     @Override
     public String toString() {
         return type + " - " + number;
     }
-    public String[][] loanTable(){
-    		String[][] table = new String[3][3];
-    		for (int i = 0; i < Currency.values().length; i++) {
-    			table[i][0] = Currency.values()[i].toString();
-    			table[i][1] = String.valueOf(this.getLoan(Currency.values()[i]));
-    			table[i][2] = String.valueOf(this.getLoanInterest(Currency.values()[i]));
-    		}
-    		return table;
+
+    public String[][] loanTable() {
+        String[][] table = new String[3][3];
+        for (int i = 0; i < Currency.values().length; i++) {
+            table[i][0] = Currency.values()[i].toString();
+            table[i][1] = String.valueOf(this.getLoan(Currency.values()[i]));
+            table[i][2] = String.valueOf(this.getLoanInterest(Currency.values()[i]));
+        }
+        return table;
     }
 
     public void sellStock(double money, double fee, Currency currency, Date date) {
@@ -167,9 +172,10 @@ public class SavingsAccount extends Account {
 
     /**
      * Withdraw money, if money less than 1000, then fee rate is 0.05%, else fee rate is 0.1%.
-     * @param money money owner wants to withdraw
+     *
+     * @param money    money owner wants to withdraw
      * @param currency type of currency
-     * @param date withdrawal time
+     * @param date     withdrawal time
      * @return -1 means withdrawal is invalid, 0 means no enough deposit to withdraw, 1 means withdraw successfully
      */
     public void buyStock(double money, double fee, Currency currency, Date date) {

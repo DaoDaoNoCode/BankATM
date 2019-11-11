@@ -3,10 +3,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
-	private final static String driver ="com.mysql.jdbc.Driver";
-    private final static String url ="jdbc:MySQL://localhost:3306/test?useSSL=false";
-    private final static String user ="root";
-    private final static String password ="123456";
+    private final static String driver = "com.mysql.jdbc.Driver";
+    private final static String url = "jdbc:MySQL://localhost:3306/bank?useSSL=false";
+    private final static String user = "root";   // Your username of mySQL
+    private final static String password = "123456"; // Your password of mySQL
+
+    public static boolean hasDatabase(String database) {
+        String sql = "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name=\"" + database + "\"";
+        try {
+            Class.forName(driver);
+            Connection conn = DriverManager.getConnection("jdbc:MySQL://localhost:3306/mysql?useSSL=false", user, password);
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            if (resultSet.next()) {
+                if (resultSet.getInt(1) == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            statement.close();
+            conn.close();
+        } catch (ClassNotFoundException e) {
+            System.out.println("Sorry, cannot find the Driver!");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public static void createDatabase(String database) {
         String createDatabaseSql = "CREATE SCHEMA " + database;
@@ -17,10 +42,10 @@ public class Database {
             statement.executeUpdate(createDatabaseSql);
             statement.close();
             conn.close();
-        } catch(ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             System.out.println("Sorry, cannot find the Driver!");
             e.printStackTrace();
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -154,7 +179,6 @@ public class Database {
             sbQuery.append("'");
         }
         String querySql = sbQuery.toString();
-        System.out.println(querySql);
         List<List<String>> list = new ArrayList<>();
         try {
             Class.forName(driver);
@@ -194,18 +218,18 @@ public class Database {
             e.printStackTrace();
         }
     }
-    
+
     public static boolean hasDataRow(String tableName, String primaryKey, String primaryKeyValue) {
-    	boolean hasData = false;
-    	StringBuilder sbQuery = new StringBuilder();
-    	sbQuery.append("SELECT * FROM ");
-    	sbQuery.append(tableName);
-    	sbQuery.append(" WHERE ");
-    	sbQuery.append(primaryKey);
-    	sbQuery.append("='");
-    	sbQuery.append(primaryKeyValue);
-    	sbQuery.append("'");
-    	String querySql = sbQuery.toString();
+        boolean hasData = false;
+        StringBuilder sbQuery = new StringBuilder();
+        sbQuery.append("SELECT * FROM ");
+        sbQuery.append(tableName);
+        sbQuery.append(" WHERE ");
+        sbQuery.append(primaryKey);
+        sbQuery.append("='");
+        sbQuery.append(primaryKeyValue);
+        sbQuery.append("'");
+        String querySql = sbQuery.toString();
         System.out.println(querySql);
         try {
             Class.forName(driver);
@@ -213,7 +237,7 @@ public class Database {
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery(querySql);
             if (resultSet.next()) {
-            	hasData = true;
+                hasData = true;
             }
             statement.close();
             conn.close();

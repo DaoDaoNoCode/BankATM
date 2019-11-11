@@ -1,4 +1,3 @@
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -12,16 +11,16 @@ public class Account {
     private static final int ACCOUNT_NUMBER_LENGTH = 12;
 
     private static final double ACCOUNT_OPEN_CLOSE_FEE = 5.0;
-    
+
     private final String bankerTransactionTableName = "BANK_TRANSACTION";
-    
+
     private final String[] bankerTransactionCreateArgs = {"ACCOUNT_NUMBER char(12) not null", "CUSTOMER varchar(20) not null", "TYPE varchar(20) not null",
-    		"MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null", "ID varchar(20) not null"};
+            "MONEY varchar(20) not null", "CURRENCY varchar(3) not null", "DATE varchar(20) not null", "ID varchar(20) not null"};
 
     private final String bankerTransactionPrimaryKey = "ID";
-    
+
     private final String[] bankerTransactionArgs = {"TYPE", "MONEY", "CURRENCY", "DATE", "ID"};
-    
+
     protected Bank bank;
 
     protected String owner;
@@ -38,7 +37,8 @@ public class Account {
 
     protected AccountType type;
 
-    public Account() { }
+    public Account() {
+    }
 
     public Account(Bank bank, String owner, String password, Date date) {
         this.bank = bank;
@@ -68,8 +68,9 @@ public class Account {
 
     /**
      * Calculate the days between two dates.
+     *
      * @param startTime start date
-     * @param endTime end date
+     * @param endTime   end date
      * @return days between them
      */
     public static int getDistanceTime(Date startTime, Date endTime) {
@@ -133,9 +134,10 @@ public class Account {
 
     /**
      * Withdraw money, if money less than 1000, then fee rate is 0.05%, else fee rate is 0.1%.
-     * @param money money owner wants to withdraw
+     *
+     * @param money    money owner wants to withdraw
      * @param currency type of currency
-     * @param date withdrawal time
+     * @param date     withdrawal time
      * @return -1 means withdrawal is invalid, 0 means no enough deposit to withdraw, 1 means withdraw successfully
      */
     public int withdraw(double money, Currency currency, Date date) {
@@ -184,7 +186,8 @@ public class Account {
 
     /**
      * Give interest at a daily rate of 0.02% to those deposit no less than 1000.
-     * @param day the day added by banker
+     *
+     * @param day  the day added by banker
      * @param date the day to calculate the interest
      */
     public void addSaveInterest(int day, Date date) {
@@ -213,6 +216,7 @@ public class Account {
 
     /**
      * If someone close an account without withdrawing all of the money in it, the money will be given to banker.
+     *
      * @param date
      */
     public void closeAccount(Date date) {
@@ -251,30 +255,30 @@ public class Account {
         }
         number = sb.toString();
     }
-    
+
     private void readTransactionsFromDatabase() {
         transactions = new ArrayList<>();
-    	if (!Database.hasTable(bankerTransactionTableName)) {
-    		Database.createTable(bankerTransactionTableName, bankerTransactionCreateArgs);
-    		Database.setPrimaryKey(bankerTransactionTableName, bankerTransactionPrimaryKey);
-    	} else {
-    		String[] queryIndex = {"ACCOUNT_NUMBER"};
-    		String[] queryValue = {number};
-    		List<List<String>> transactions = Database.queryData(bankerTransactionTableName, queryIndex, queryValue, bankerTransactionArgs);
-    		for (List<String> transaction: transactions) {
-    			Date date = new Date();
-    			double money = Double.valueOf(transaction.get(1));
-    			int ID = Integer.parseInt(transaction.get(4));
-    			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
-    			try {
-    				date = sdf.parse(transaction.get(3));
+        if (!Database.hasTable(bankerTransactionTableName)) {
+            Database.createTable(bankerTransactionTableName, bankerTransactionCreateArgs);
+            Database.setPrimaryKey(bankerTransactionTableName, bankerTransactionPrimaryKey);
+        } else {
+            String[] queryIndex = {"ACCOUNT_NUMBER"};
+            String[] queryValue = {number};
+            List<List<String>> transactions = Database.queryData(bankerTransactionTableName, queryIndex, queryValue, bankerTransactionArgs);
+            for (List<String> transaction : transactions) {
+                Date date = new Date();
+                double money = Double.valueOf(transaction.get(1));
+                int ID = Integer.parseInt(transaction.get(4));
+                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+                try {
+                    date = sdf.parse(transaction.get(3));
                     Transaction t = new Transaction(money, Currency.valueOf(transaction.get(2)), TransactionType.valueOf(transaction.get(0)), owner, number, ID, date);
                     this.transactions.add(t);
-    			} catch (ParseException e) {
-    				e.printStackTrace();
-    			}
-    		}
-    		
-    	}
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 }

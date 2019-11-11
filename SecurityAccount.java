@@ -1,6 +1,5 @@
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class SecurityAccount extends Account {
@@ -15,6 +14,8 @@ public class SecurityAccount extends Account {
 
     private final String stockDealTableName = "STOCK_DEAL";
 
+    private HashMap<String, Stock> stocks = new HashMap<>();
+
     private HashMap<String, StockDeal> stockDeals = new HashMap<>(); // records the manipulation towards the stocks of one account
 
     public SecurityAccount(Bank bank, String accountNumber, String owner, String password, Date date) {
@@ -23,6 +24,7 @@ public class SecurityAccount extends Account {
         type = AccountType.SECURITY;
         readStocksBoughtFromDatabase();
     }
+
     public SecurityAccount(Bank bank, String owner, String password, Date date) {
         super(bank, owner, password, date);
         type = AccountType.SECURITY;
@@ -35,10 +37,10 @@ public class SecurityAccount extends Account {
 
     public HashMap<String, Stock> getStocks() {
         HashMap<String, Stock> bankStocks = bank.getStocks();
-        HashMap<String, Stock> stocks = new HashMap<>();
         for (StockDeal stockDeal : stockDeals.values()) {
             String stockName = stockDeal.getStock();
-            stocks.put(stockName, bankStocks.get(stockName));
+            Stock stock = new Stock(stockName, bankStocks.get(stockName).getUSDPrice(), stockDeal.getShares(), bankStocks.get(stockName).getChange());
+            stocks.put(stockName, stock);
         }
         return stocks;
     }
@@ -48,14 +50,14 @@ public class SecurityAccount extends Account {
             Database.createTable(stockDealTableName, stockDealCreateArgs);
             Database.setPrimaryKey(stockDealTableName, stockDealPrimaryKey);
         } else {
-                String[] queryIndex = {"ACCOUNT_NUMBER"};
-                String[] queryValue = {this.number};
-                List<List<String>> stockDeals = Database.queryData(stockDealTableName, queryIndex, queryValue, stockDealArgs);
-                for (List<String> stockDeal: stockDeals) {
-                    int shares = Integer.parseInt(stockDeal.get(3));
-                    String stockName = stockDeal.get(2);
-                    this.stockDeals.put(stockDeal.get(0), new StockDeal(stockDeal.get(0), stockDeal.get(1), stockName, shares));
-                }
+            String[] queryIndex = {"ACCOUNT_NUMBER"};
+            String[] queryValue = {this.number};
+            List<List<String>> stockDeals = Database.queryData(stockDealTableName, queryIndex, queryValue, stockDealArgs);
+            for (List<String> stockDeal : stockDeals) {
+                int shares = Integer.parseInt(stockDeal.get(3));
+                String stockName = stockDeal.get(2);
+                this.stockDeals.put(stockDeal.get(0), new StockDeal(stockDeal.get(0), stockDeal.get(1), stockName, shares));
+            }
         }
     }
 
@@ -63,8 +65,8 @@ public class SecurityAccount extends Account {
         UI
         currency, saving account, 
         Stockname, shares
-    */                
-    public int buyStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
+    */
+    public int buyStock(String name, int shares, Currency currency, SavingsAccount account, Date date) {
         Stock bankStock = bank.getStocks().get(name);
 
         if (shares > bankStock.getShares()) {
@@ -74,7 +76,7 @@ public class SecurityAccount extends Account {
 
         double amount = 0.0;
         double fee = 0.0;
-        switch(currency) {
+        switch (currency) {
             case USD: {
                 amount = CommonMathMethod.twoDecimal(CommonMathMethod.bigDecimalMultiply(shares, bankStock.getUSDPrice()));
                 fee = 5.0;
@@ -91,12 +93,11 @@ public class SecurityAccount extends Account {
                 break;
             }
         }
-        
+
         if (account.getDeposit(currency) < amount + fee) {
             //System.out.println("Saving account money insufficient!");
             return 1;
-        }
-        else {
+        } else {
             // update owner stocks
             HashMap<String, Stock> stocks = getStocks();
             if (stocks.containsKey(name)) {
@@ -122,66 +123,88 @@ public class SecurityAccount extends Account {
             bankStock.setShares(bankStock.getShares() - shares);
             String[] updateBankArgs = {"SHARE"};
             String[] updateBankValues = {String.valueOf(bankStock.getShares())};
-            Database.updateData(stockTableName, "STOCK_NAME", name, updateBankArgs , updateBankValues);
-            
+            Database.updateData(stockTableName, "STOCK_NAME", name, updateBankArgs, updateBankValues);
         }
         return 0;
     }
 
-    public int sellStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
+    public int sellStock(String name, int shares, Currency currency, SavingsAccount account, Date date) {
         Stock bankStock = bank.getStocks().get(name);
-        if (shares > stockDeals.get(name).getShares()) {
-            //System.out.println("Cannot sell more than current biggest shares");
-            return -1;
+        for (StockDeal stockDeal : stockDeals.values()) {
+            if (stockDeal.getStock().equals(name)) {
+                if (shares > stockDeal.getShares()) {
+                    //System.out.println("Cannot sell more than current biggest shares");
+                    return -1;
+                }
+
+                double amount = 0.0;
+                double fee = 5.0;
+                switch (currency) {
+                    case USD: {
+                        amount = CommonMathMethod.twoDecimal(CommonMathMethod.bigDecimalMultiply(shares, bankStock.getUSDPrice()));
+                        fee = 5.0;
+                        break;
+                    }
+                    case CNY: {
+                        amount = CommonMathMethod.twoDecimal(CommonMathMethod.bigDecimalMultiply(shares, bankStock.getRMBPrice()));
+                        fee = CommonMathMethod.twoDecimal(CommonMathMethod.bigDecimalMultiply(5.0, 7.0));
+                        break;
+                    }
+                    case EUR: {
+                        amount = CommonMathMethod.twoDecimal(CommonMathMethod.bigDecimalMultiply(shares, bankStock.getEurPrice()));
+                        fee = CommonMathMethod.twoDecimal(CommonMathMethod.bigDecimalMultiply(CommonMathMethod.bigDecimalMultiply(5.0, 7.0), 0.125));
+                        break;
+                    }
+                }
+
+                // update owner stocks
+                stockDeal.sellShares(shares);
+                int newShare = stockDeal.getShares();
+                stocks.get(name).setShares(newShare);
+                if (newShare == 0) {
+                    stockDeals.remove(stockDeal.getDeal_ID());
+                    Database.deleteData(stockDealTableName, stockDealPrimaryKey, stockDeal.getDeal_ID());
+                } else {
+                    // Simply update the shares that a client has
+                    String[] updateArgs = {"STOCK_SHARE"};
+                    String[] updateValues = {String.valueOf(newShare)};
+                    Database.updateData(stockDealTableName, "DEAL_ID", stockDeal.getDeal_ID(), updateArgs, updateValues);
+                }
+
+                // add money on saving account
+                account.sellStock(amount, fee, currency, date);
+                // update bank stocks
+                bankStock.setShares(bankStock.getShares() + shares);
+                String[] updateBankArgs = {"SHARE"};
+                String[] updateBankValues = {String.valueOf(bankStock.getShares())};
+                Database.updateData(stockTableName, "STOCK_NAME", name, updateBankArgs, updateBankValues);
+            }
         }
-
-        double amount = CommonMathMethod.twoDecimal(CommonMathMethod.bigDecimalMultiply(shares, bankStock.getUSDPrice()));
-        double fee = 5.0;
-
-        // update owner stocks
-        stockDeals.get(name).sellShares(shares);
-        int newShare = stockDeals.get(name).getShares();
-        if (newShare == 0) {
-            Database.deleteData(stockDealTableName, stockDealPrimaryKey, stockDeals.get(name).getDeal_ID());
-        } else {
-            // Simply update the shares that a client has
-            String[] updateArgs = {"STOCK_SHARE"};
-            String[] updateValues = {String.valueOf(newShare)};
-            Database.updateData(stockDealTableName, "DEAL_ID", stockDeals.get(name).getDeal_ID(), updateArgs, updateValues);
-        }
-
-        // add money on saving account
-        account.sellStock(amount, fee, Currency.USD, date);
-        // update bank stocks
-        bankStock.setShares(bankStock.getShares() + shares);
-        String[] updateBankArgs = {"SHARE"};
-        String[] updateBankValues = {String.valueOf(bankStock.getShares())};
-        Database.updateData(stockTableName, "STOCK_NAME", name, updateBankArgs , updateBankValues);
         return 0;
     }
-    
+
     public String toString() {
-    		return type.toString();
+        return type.toString();
     }
-    
-    public String[][] stockTable(){
+
+    public String[][] stockTable() {
         HashMap<String, Stock> stocks = getStocks();
-		String[][] table = new String[stocks.size()][4];
-		int i = 0;
-		for (StockDeal stockDeal: stockDeals.values()) {
-		    String stockName = stockDeal.getStock();
-			table[i][0] = stockName;
-			table[i][1] = String.valueOf(stocks.get(stockName).getUSDPrice());
-			table[i][2] = String.valueOf(CommonMathMethod.bigDecimalMultiply(stocks.get(stockName).getChange(), 100.0)) + "%";
-			table[i][3] = String.valueOf(stockDeal.getShares());
-			i++;
-		}
-		return table;
+        String[][] table = new String[stocks.size()][4];
+        int i = 0;
+        for (StockDeal stockDeal : stockDeals.values()) {
+            String stockName = stockDeal.getStock();
+            table[i][0] = stockName;
+            table[i][1] = String.valueOf(stocks.get(stockName).getUSDPrice());
+            table[i][2] = String.valueOf(CommonMathMethod.bigDecimalMultiply(stocks.get(stockName).getChange(), 100.0)) + "%";
+            table[i][3] = String.valueOf(stockDeal.getShares());
+            i++;
+        }
+        return table;
     }
-    
+
     public boolean hasStock(String stockName) {
-    		if (stockDeals.get(stockName)!=null)
-    			return true;
-    		return false;
+        if (stockDeals.get(stockName) != null)
+            return true;
+        return false;
     }
 }

@@ -1,4 +1,3 @@
-import javax.xml.crypto.Data;
 import java.util.Random;
 
 public class StockDeal {
@@ -43,12 +42,12 @@ public class StockDeal {
         return Deal_ID;
     }
 
-    public String getStock() {
-        return stock;
-    }
-
     public void setDeal_ID(String deal_ID) {
         Deal_ID = deal_ID;
+    }
+
+    public String getStock() {
+        return stock;
     }
 
     public String getAccount() {
@@ -68,11 +67,11 @@ public class StockDeal {
     }
 
     // for customer
-    public void buyShares (int i) {
+    public void buyShares(int i) {
         this.shares += i;
     }
 
-    public void sellShares (int i) {
+    public void sellShares(int i) {
         this.shares -= i;
     }
 

@@ -11,7 +11,7 @@ public class Stock {
 
     protected double change;
 
-    public Stock (String name, double price, int shares) {
+    public Stock(String name, double price, int shares) {
         this.name = name;
         this.price = price;
         this.shares = shares;
@@ -21,7 +21,8 @@ public class Stock {
             Database.insertData(stockTableName, insertedData);
         }
     }
-    public Stock (String name, double price, int shares, double change) {
+
+    public Stock(String name, double price, int shares, double change) {
         this.name = name;
         this.price = price;
         this.shares = shares;
@@ -47,25 +48,9 @@ public class Stock {
     public String getName() {
         return this.name;
     }
-    
+
     public int getShares() {
-    		return this.shares;
-    }
-    
-    public double getChange() {
-    		return this.change;
-    }
-
-    public boolean someoneHasShare() {
-        return true;
-    }
-
-    // for Bank
-    public void setPrice(double price) {
-        this.price = price;
-        String[] args = {"PRICE"};
-        String[] updateValue = {Double.toString(price)};
-        Database.updateData(stockTableName, stockPrimaryKey, name, args, updateValue);
+        return this.shares;
     }
 
     // for Bank
@@ -76,11 +61,27 @@ public class Stock {
         Database.updateData(stockTableName, stockPrimaryKey, name, args, updateValue);
     }
 
+    public double getChange() {
+        return this.change;
+    }
+
     // for Bank
     public void setChange(double change) {
         this.change = change;
         String[] args = {"CHANGE_PERCENTAGE"};
         String[] updateValues = {Double.toString(change)};
         Database.updateData(stockTableName, "STOCK_NAME", name, args, updateValues);
+    }
+
+    public boolean someoneHasShare() {
+        return Database.hasDataRow("STOCK_DEAL", "STOCK_NAME", name);
+    }
+
+    // for Bank
+    public void setPrice(double price) {
+        this.price = price;
+        String[] args = {"PRICE"};
+        String[] updateValue = {Double.toString(price)};
+        Database.updateData(stockTableName, stockPrimaryKey, name, args, updateValue);
     }
 }
