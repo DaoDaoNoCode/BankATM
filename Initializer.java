@@ -20,8 +20,9 @@ public class Initializer {
 	MainPanel newDeposit;
 	MainPanel newTransfer;
 	MainPanel newLoans;
-	MainPanel newCustomerInquiry;
-	MainPanel newBankerInquiry;
+	MainPanel newCustomerTrans;
+	MainPanel newBankerTrans;
+	//MainPanel newSecurityTrans;
 	MainPanel newManager;
 	MainPanel newDaily;
 	MainPanel newAccounts;
@@ -55,8 +56,9 @@ public class Initializer {
 		newDeposit = new MainPanel("deposit", newFrame, newBank, newDate);
 		newTransfer = new MainPanel("transfer", newFrame, newBank, newDate);
 		newLoans = new MainPanel("loans", newFrame, newBank, newDate);
-		newCustomerInquiry = new MainPanel("inquiry", newFrame, newBank, newDate);
-		newBankerInquiry = new MainPanel("inquiry", newFrame, newBank, newDate);
+		newCustomerTrans = new MainPanel("transactions", newFrame, newBank, newDate);
+		newBankerTrans = new MainPanel("transactions", newFrame, newBank, newDate);
+		//newSecurityTrans = new MainPanel("securitytrans", newFrame, newBank, newDate);
 		newManager = new MainPanel("manager", newFrame, newBank, newDate);
 		newDaily = new MainPanel("daily", newFrame, newBank, newDate);
 		newAccounts = new MainPanel("accounts", newFrame, newBank, newDate);
@@ -92,10 +94,10 @@ public class Initializer {
 		newManager.setLinkButton(newViewStocks, 4);
 		newManager.setLinkButton(newManager, 5);
 		newManager.setBack(newStart);
-		newAccounts.setFore(newBankerInquiry);
+		newAccounts.setFore(newBankerTrans);
 		newAccounts.setBack(newManager);
 		newDaily.setBack(newManager);
-		newBankerInquiry.setBack(newAccounts);
+		newBankerTrans.setBack(newAccounts);
 		newViewStocks.setBack(newManager);
 		newViewStocks.setFore(newSetStocks);
 		newSetStocks.setBack(newViewStocks);
@@ -121,6 +123,8 @@ public class Initializer {
 		newSelect.setLink(newViewSecurity);
 		newViewSecurity.setBack(newMain);
 		newViewSecurity.setLinkButton(newStocks, 0);
+		//newViewSecurity.setLinkButton(newSecurityTrans, 1);
+		//newSecurityTrans.setBack(newViewSecurity);
 		newStocks.setBack(newViewSecurity);
 		newStocks.setFore(newBuyStocks);
 		newStocks.setLink(newSellStocks);
@@ -130,10 +134,10 @@ public class Initializer {
 		newView.setBack(newMain);
 		newView.setLinkButton(newWithdraw, 0);
 		newView.setLinkButton(newDeposit, 1);
-		newView.setLinkButton(newCustomerInquiry, 2);
+		newView.setLinkButton(newCustomerTrans, 2);
 		newWithdraw.setBack(newView);
 		newDeposit.setBack(newView);
-		newCustomerInquiry.setBack(newView);
+		newCustomerTrans.setBack(newView);
 		newTransfer.setBack(newMain);
 		newLoans.setBack(newMain);
 	}
