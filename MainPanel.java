@@ -123,7 +123,7 @@ public class MainPanel extends AtmPanel{
 			break;
 		}
 		case "security":{//view security
-			String[] names = {"View Stocks", "Close Account"};
+			String[] names = {"View Stocks", "Cloce Account"};
 			int[] sizes = {17, 17};
 			buttonNum = 2;
 			setButtons(names, sizes, 2);
@@ -485,7 +485,7 @@ public class MainPanel extends AtmPanel{
         transactions.sort(new Comparator<Transaction>() {
             @Override
             public int compare(Transaction o1, Transaction o2) {
-                return o1.getID() - o2.getID();
+                return o1.getDate().compareTo(o2.getDate());
             }
         });
         for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -499,7 +499,7 @@ public class MainPanel extends AtmPanel{
 		transactions.sort(new Comparator<Transaction>() {
 			@Override
 			public int compare(Transaction o1, Transaction o2) {
-				return o1.getID() - o2.getID();
+				return o1.getDate().compareTo(o2.getDate());
 			}
 	 	});
 		for (int i = transactions.size() - 1; i >= 0; i--) {
@@ -829,7 +829,7 @@ public class MainPanel extends AtmPanel{
 			} catch (Exception e) {
 				requestFailMsg();
 			}
-		}
+    		}
     }
     private boolean quickVerify() {//verify password
     		JPasswordField jPasswordFieldPassword = new JPasswordField(15);
