@@ -142,7 +142,7 @@ public class MainPanel extends AtmPanel{
 				public boolean isCellEditable(int row, int column) {
 					return false;
 				}
-			};;
+			};
 			table = new JTable(data);
 			jsp = new JScrollPane(table);
 			setTable();
@@ -161,7 +161,7 @@ public class MainPanel extends AtmPanel{
 				public boolean isCellEditable(int row, int column) {
 					return false;
 				}
-			};;
+			};
 			table = new JTable(data);
 			jsp = new JScrollPane(table);
 			setTable();
@@ -284,10 +284,11 @@ public class MainPanel extends AtmPanel{
 				public boolean isCellEditable(int row, int column) {
 					return false;
 				}
-			};;
+			};
 			table = new JTable(data);
 			jsp = new JScrollPane(table);
 			setTable();
+			break;
 		}
 		case "securitytrans":{
 			setTitle("Recent Transactions");
@@ -347,7 +348,7 @@ public class MainPanel extends AtmPanel{
 		if (title!=null)
 			remove(title);
 		title = new JLabel(s);
-		title.setBounds(240, 50, 300, 100);
+		title.setBounds(240, 50, 500, 100);
 		title.setFont(new Font("calibri",Font.BOLD, 20));
 		title.setFocusable(false);
 		add(title);
@@ -362,28 +363,28 @@ public class MainPanel extends AtmPanel{
 		JLabel cny = new JLabel("CNY");
 		JLabel eur = new JLabel("EUR");
 
-		name.setBounds(30, 110, 200, 100);
+		name.setBounds(30, 110, 170, 100);
 		name.setFont(new Font("calibri",Font.BOLD, 20));
 		name.setFocusable(false);
-		usd.setBounds(30, 150, 200, 100);
+		usd.setBounds(30, 150, 170, 100);
 		usd.setFont(new Font("calibri",Font.BOLD, 15));
 		usd.setFocusable(false);
 		usd.setForeground(Color.gray);
-		labels[0].setBounds(30, 180, 200, 100);
+		labels[0].setBounds(30, 180, 170, 100);
 		labels[0].setFont(new Font("calibri",Font.BOLD, 20));
 		labels[0].setFocusable(false);
-		cny.setBounds(30, 215, 200, 100);
+		cny.setBounds(30, 215, 170, 100);
 		cny.setFont(new Font("calibri",Font.BOLD, 15));
 		cny.setFocusable(false);
 		cny.setForeground(Color.gray);
-		labels[1].setBounds(30, 245, 200, 100);
+		labels[1].setBounds(30, 245, 170, 100);
 		labels[1].setFont(new Font("calibri",Font.BOLD, 20));
 		labels[1].setFocusable(false);
-		eur.setBounds(30, 280, 200, 100);
+		eur.setBounds(30, 280, 170, 100);
 		eur.setFont(new Font("calibri",Font.BOLD, 15));
 		eur.setFocusable(false);
 		eur.setForeground(Color.gray);
-		labels[2].setBounds(30, 310, 200, 100);
+		labels[2].setBounds(30, 310, 170, 100);
 		labels[2].setFont(new Font("calibri",Font.BOLD, 20));
 		labels[2].setFocusable(false);
 
@@ -401,11 +402,11 @@ public class MainPanel extends AtmPanel{
 	private void showName() {
 		JLabel welcome = new JLabel("Hello!");
 		name = new JLabel("#");
-		welcome.setBounds(30, 110, 200, 100);
+		welcome.setBounds(30, 110, 170, 100);
 		welcome.setFont(new Font("calibri",Font.BOLD, 20));
 		welcome.setForeground(Color.gray);
 		welcome.setFocusable(false);
-		name.setBounds(30, 150, 200, 100);
+		name.setBounds(30, 150, 170, 100);
 		name.setFont(new Font("calibri",Font.BOLD, 20));
 		name.setForeground(Color.gray);
 		name.setFocusable(false);
@@ -479,16 +480,16 @@ public class MainPanel extends AtmPanel{
 		labels[1] = new JLabel("#");
 		labels[2] = new JLabel("#");
 
-		name.setBounds(30, 110, 200, 100);
+		name.setBounds(30, 110, 170, 100);
 		name.setFont(new Font("calibri",Font.BOLD, 20));
 		name.setFocusable(false);
-		labels[0].setBounds(30, 180, 200, 100);
+		labels[0].setBounds(30, 180, 170, 100);
 		labels[0].setFont(new Font("calibri",Font.BOLD, 20));
 		labels[0].setFocusable(false);
-		labels[1].setBounds(130, 182, 200, 100);
+		labels[1].setBounds(130, 182, 70, 100);
 		labels[1].setFont(new Font("calibri",Font.BOLD, 15));
 		labels[1].setFocusable(false);
-		labels[2].setBounds(30, 245, 200, 100);
+		labels[2].setBounds(30, 245, 170, 100);
 		labels[2].setFont(new Font("calibri",Font.BOLD, 20));
 		labels[2].setFocusable(false);
 
@@ -499,11 +500,11 @@ public class MainPanel extends AtmPanel{
 		
 		JLabel shares = new JLabel("Shares");
 		JLabel price = new JLabel("Price");
-		price.setBounds(30, 150, 200, 100);
+		price.setBounds(30, 150, 170, 100);
 		price.setFont(new Font("calibri",Font.BOLD, 15));
 		price.setForeground(Color.gray);
 		price.setFocusable(false);
-		shares.setBounds(30, 215, 200, 100);
+		shares.setBounds(30, 215, 170, 100);
 		shares.setFont(new Font("calibri",Font.BOLD, 15));
 		shares.setForeground(Color.gray);
 		shares.setFocusable(false);
