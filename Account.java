@@ -150,7 +150,7 @@ public class Account {
         } else {
             Transaction transaction1 = new Transaction(-money, currency, TransactionType.WITHDRAW, owner, this.getNumber(), date);
             transaction1.insertTransactionIntoDatabase();
-            Transaction transaction2 = new Transaction(withdrawFee, currency, TransactionType.WITHDRAW_FEE, owner, this.getNumber(), date);
+            Transaction transaction2 = new Transaction(-withdrawFee, currency, TransactionType.WITHDRAW_FEE, owner, this.getNumber(), date);
             transaction2.insertTransactionIntoDatabase();
             deposit.put(currency, CommonMathMethod.twoDecimal(balance - money - withdrawFee));
             updateDepositInDatabase(currency);

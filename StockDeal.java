@@ -43,6 +43,10 @@ public class StockDeal {
         return Deal_ID;
     }
 
+    public String getStock() {
+        return stock;
+    }
+
     public void setDeal_ID(String deal_ID) {
         Deal_ID = deal_ID;
     }
@@ -61,6 +65,15 @@ public class StockDeal {
 
     public void setShares(int shares) {
         this.shares = shares;
+    }
+
+    // for customer
+    public void buyShares (int i) {
+        this.shares += i;
+    }
+
+    public void sellShares (int i) {
+        this.shares -= i;
     }
 
     /**

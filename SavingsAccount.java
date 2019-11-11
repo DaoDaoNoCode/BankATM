@@ -151,4 +151,37 @@ public class SavingsAccount extends Account {
     		}
     		return table;
     }
+
+    public void sellStock(double money, double fee, Currency currency, Date date) {
+        double balance = deposit.get(currency);
+        deposit.put(currency, CommonMathMethod.twoDecimal(balance + money - fee));
+        updateDepositInDatabase(currency);
+        Transaction transaction1 = new Transaction(money, currency, TransactionType.SELL_STOCK, owner, this.getNumber(), date);
+        transaction1.insertTransactionIntoDatabase();
+        Transaction transaction2 = new Transaction(-fee, currency, TransactionType.STOCK_FEE, owner, this.getNumber(), date);
+        transaction2.insertTransactionIntoDatabase();
+        transactions.add(transaction1);
+        transactions.add(transaction2);
+        bank.addTransaction(transaction2);
+    }
+
+    /**
+     * Withdraw money, if money less than 1000, then fee rate is 0.05%, else fee rate is 0.1%.
+     * @param money money owner wants to withdraw
+     * @param currency type of currency
+     * @param date withdrawal time
+     * @return -1 means withdrawal is invalid, 0 means no enough deposit to withdraw, 1 means withdraw successfully
+     */
+    public void buyStock(double money, double fee, Currency currency, Date date) {
+        double balance = deposit.get(currency);
+        deposit.put(currency, CommonMathMethod.twoDecimal(balance - money - fee));
+        updateDepositInDatabase(currency);
+        Transaction transaction1 = new Transaction(-money, currency, TransactionType.BUY_STOCK, owner, this.getNumber(), date);
+        transaction1.insertTransactionIntoDatabase();
+        Transaction transaction2 = new Transaction(-fee, currency, TransactionType.STOCK_FEE, owner, this.getNumber(), date);
+        transaction2.insertTransactionIntoDatabase();
+        transactions.add(transaction1);
+        transactions.add(transaction2);
+        bank.addTransaction(transaction2);
+    }
 }

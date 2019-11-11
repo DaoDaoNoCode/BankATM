@@ -148,15 +148,15 @@ public class Customer {
             for (List<String> account : accounts) {
                 Date date = new Date();
                 try {
-                    date = formatter.parse(account.get(5));
+                    date = formatter.parse(account.get(3));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                SecurityAccount securityAccountAccount = new SecurityAccount(bank, account.get(0), account.get(1), account.get(2), date);
-                if (account.get(6).equals("CLOSED")) {
+                SecurityAccount securityAccount = new SecurityAccount(bank, account.get(0), account.get(1), account.get(2), date);
+                if (account.get(4).equals("CLOSED")) {
                     closedAccounts.add(securityAccount);
                 } else {
-                    this.securityAccount = securityAccountAccount;
+                    this.securityAccount = securityAccount;
                 }
             }
         }
@@ -179,7 +179,7 @@ public class Customer {
         } else {
             account = new SecurityAccount(bank, username, password, date);
             securityAccount = (SecurityAccount) account;
-            String[] values = {account.getNumber(), username, password, String.valueOf(0.0), String.valueOf(0.0), getDateString(date), "ACTIVATE"};
+            String[] values = {account.getNumber(), username, password, getDateString(date), "ACTIVATE"};
             Database.insertData(securityAccountTableName, values);
             account.openAccount();
         }

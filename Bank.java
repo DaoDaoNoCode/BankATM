@@ -273,20 +273,20 @@ public class Bank {
         stocks.get(name).setShares(shares);
     }
 
-    public HashMap<String, Integer> getBuyersNum() {
-        HashMap<String, Integer> res = new HashMap<>();
-        for (String key : stocks.keySet()) {
-            res.put(key , 0);
-        }
-        for (Customer customer : customers) {
-            HashMap<String, Stock> temp = customer.getSecurityAccounts().getStocks();
-            for (String s : temp.keySet()) {
-                // update shares bought sum
-                res.put(s, res.get(s) + temp.get(s).shares);
-            }
-        }
-        return res;
-    }
+//    public HashMap<String, Integer> getBuyersNum() {
+//        HashMap<String, Integer> res = new HashMap<>();
+//        for (String key : stocks.keySet()) {
+//            res.put(key , 0);
+//        }
+//        for (Customer customer : customers) {
+//            HashMap<String, Stock> temp = customer.getSecurityAccounts().getStocks();
+//            for (String s : temp.keySet()) {
+//                // update shares bought sum
+//                res.put(s, res.get(s) + temp.get(s).shares);
+//            }
+//        }
+//        return res;
+//    }
     public boolean deleteStock(String name) {
         if (stocks.get(name).shares > 0) {
             return false;
@@ -302,19 +302,6 @@ public class Bank {
     public void addNewStock(String name, double price, int shares, double change) {
         Stock newStock = new Stock(name, price, shares, change);
         stocks.put(name, newStock);
-    }
-    public void addStockShare(String name, int shares) {
-        stocks.get(name).buyShares(shares);
-        String[] updateArgs = {"SHARE"};
-        String[] updateValues = {String.valueOf(shares)};
-        Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
-    }
-
-    public void reduceStockShare(String name, int shares) {
-        stocks.get(name).sellShares(shares);
-        String[] updateArgs = {"SHARE"};
-        String[] updateValues = {String.valueOf(shares)};
-        Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
  
     public String[][] stockTable(){
@@ -335,10 +322,10 @@ public class Bank {
     		String[] firstLine = {"Total", String.valueOf(stocks.get(stockName).getShares())};
     		tableList.add(firstLine);
     		for (Customer customer: customers) {
-    			if (customer.getSecurityAccounts()!=null 
+    			if (customer.getSecurityAccounts()!=null
     					&& customer.getSecurityAccounts().hasStock(stockName)) {
-    				String[] line = {customer.toString(), 
-    						String.valueOf(customer.getSecurityAccounts().getStocks().get(stockName).getShares())};
+    				String[] line = {customer.toString(),
+    						String.valueOf(customer.getSecurityAccounts().getStockDeals().get(stockName).getShares())};
     				tableList.add(line);
     			}
     		}

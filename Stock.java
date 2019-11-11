@@ -83,13 +83,4 @@ public class Stock {
         String[] updateValues = {Double.toString(change)};
         Database.updateData(stockTableName, "STOCK_NAME", name, args, updateValues);
     }
-
-    // for customer
-    public void buyShares (int i) {
-        this.shares += i;
-    }
-
-    public void sellShares (int i) {
-        this.shares -= i;
-    }
 }
