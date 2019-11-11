@@ -30,7 +30,7 @@ public class Transaction {
     private double money;
 
     public Transaction(double money, Currency currency, TransactionType transactionType, String customer, String account, Date date) {
-        this.money = Account.twoDecimal(money);
+        this.money = CommonMathMethod.twoDecimal(money);
         this.currency = currency;
         this.transactionType = transactionType;
         this.customer = customer;
@@ -40,7 +40,7 @@ public class Transaction {
     }
 
     public Transaction(double money, Currency currency, TransactionType transactionType, String customer, String account, int ID, Date date) {
-        this.money = Account.twoDecimal(money);
+        this.money = CommonMathMethod.twoDecimal(money);
         this.currency = currency;
         this.transactionType = transactionType;
         this.customer = customer;

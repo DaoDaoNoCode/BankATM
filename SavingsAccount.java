@@ -1,4 +1,3 @@
-import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,13 +62,11 @@ public class SavingsAccount extends Account {
         else if (money > 10000.0 || money <= 0.0) return 0;
         else {
             double balance = deposit.get(currency);
-            loan.put(currency, twoDecimal(money));
-            BigDecimal interestRateBig = BigDecimal.valueOf(0.001);
-            BigDecimal moneyBig = BigDecimal.valueOf(money);
-            double currentInterest = interestRateBig.multiply(moneyBig).doubleValue();
-            loanInterest.put(currency, twoDecimal(currentInterest));
+            loan.put(currency, CommonMathMethod.twoDecimal(money));
+            double currentInterest = CommonMathMethod.bigDecimalMultiply(money, 0.001);
+            loanInterest.put(currency, CommonMathMethod.twoDecimal(currentInterest));
             updateLoanInDatabase(currency);
-            deposit.put(currency, twoDecimal(money + balance));
+            deposit.put(currency, CommonMathMethod.twoDecimal(money + balance));
             updateDepositInDatabase(currency);
             Transaction transaction = new Transaction(money, currency, TransactionType.LOAN, owner, super.getNumber(), date);
             transactions.add(transaction);
@@ -89,10 +86,7 @@ public class SavingsAccount extends Account {
                 double currentLoan = loan.get(currency);
                 if (currentLoan != 0) {
                     int days = getDistanceTime(transaction.getDate(), date);
-                    BigDecimal daysBig = BigDecimal.valueOf(days);
-                    BigDecimal currentLoanBig = BigDecimal.valueOf(currentLoan);
-                    BigDecimal currentLoanBigRate = BigDecimal.valueOf(0.001);
-                    loanInterest.put(currency, twoDecimal(currentLoanBig.multiply(daysBig.multiply(currentLoanBigRate)).doubleValue()));
+                    loanInterest.put(currency, CommonMathMethod.twoDecimal(CommonMathMethod.bigDecimalMultiply(CommonMathMethod.bigDecimalMultiply(currentLoan, 0.001), days)));
                     updateLoanInDatabase(currency);
                 }
             }
@@ -118,7 +112,7 @@ public class SavingsAccount extends Account {
                 loan.put(currency, 0.0);
                 loanInterest.put(currency, 0.0);
                 updateLoanInDatabase(currency);
-                deposit.put(currency, twoDecimal(currentBalance - currentLoan - currentInterest));
+                deposit.put(currency, CommonMathMethod.twoDecimal(currentBalance - currentLoan - currentInterest));
                 updateDepositInDatabase(currency);
                 Transaction transaction1 = new Transaction(-currentLoan, currency, TransactionType.LOAN_REPAY, owner, super.getNumber(), date);
                 transaction1.insertTransactionIntoDatabase();

@@ -67,7 +67,7 @@ public class SecurityAccount extends Account {
     public void buyStock (String name, int shares, Currency currency, SavingsAccount account, Date date) {
         Stock bankStock = bank.getStocks().get(name);
 
-        if (shares > bankStock.shares) {
+        if (shares > bankStock.getShares()) {
             System.out.println("Cannot buy more than bank's inventory!");
             return;
         }
@@ -75,11 +75,11 @@ public class SecurityAccount extends Account {
         double amount = 0;
         switch(currency) {
             case USD: 
-                amount = twoDecimal(shares * bankStock.getUSDPrice());
+                amount = CommonMathMethod.twoDecimal(shares * bankStock.getUSDPrice());
             case CNY:
-                amount = twoDecimal(shares * bankStock.getRMBPrice());
+                amount = CommonMathMethod.twoDecimal(shares * bankStock.getRMBPrice());
             case EUR: 
-                amount = twoDecimal(shares * bankStock.getEurPrice());
+                amount = CommonMathMethod.twoDecimal(shares * bankStock.getEurPrice());
         }
         
         if (account.getDeposit(currency) < amount) {
@@ -120,7 +120,7 @@ public class SecurityAccount extends Account {
         }
         
         // add money on saving account
-        double amount = twoDecimal(shares *bank.getStocks().get(name).price);
+        double amount = CommonMathMethod.twoDecimal(shares *bank.getStocks().get(name).price);
         account.save(amount, currency, date);
         // update owner stocks
         stocks.get(name).sellShares(shares);

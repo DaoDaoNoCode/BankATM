@@ -619,7 +619,7 @@ public class MainPanel extends AtmPanel{
 		setTitle(stock.getName()+"  "+format.format(date));
 		name.setText(stock.getName());
 		labels[0].setText("$"+stock.getUSDPrice());
-		labels[1].setText(stock.getChange()*100+"%");
+		labels[1].setText(String.valueOf(CommonMathMethod.bigDecimalMultiply(stock.getChange(), 100.0)) + "%");
 		labels[2].setText(String.valueOf(stock.getShares()));
 		if (stock.getChange()>0)
 			labels[1].setForeground(Color.decode("#32CD32"));

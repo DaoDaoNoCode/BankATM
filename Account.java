@@ -87,16 +87,6 @@ public class Account {
         return days;
     }
 
-    /**
-     * The result should be quoted in two decimal places.
-     * @param decimal the input decimal
-     * @return decimal after round half up
-     */
-    static public double twoDecimal(double decimal) {
-        BigDecimal newDecimal = BigDecimal.valueOf(decimal);
-        return newDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-    }
-
     public double getDeposit(Currency currency) {
         return deposit.get(currency);
     }
@@ -134,7 +124,7 @@ public class Account {
 
     public void save(double money, Currency currency, Date date) {
         double balance = deposit.get(currency);
-        deposit.put(currency, twoDecimal(balance + money));
+        deposit.put(currency, CommonMathMethod.twoDecimal(balance + money));
         Transaction transaction = new Transaction(money, currency, TransactionType.SAVE, owner, this.getNumber(), date);
         transactions.add(transaction);
         transaction.insertTransactionIntoDatabase();
@@ -153,9 +143,7 @@ public class Account {
             return -1;
         }
         double withdrawFeeRate = money >= 1000 ? 0.001 : 0.0005;
-        BigDecimal withdrawFeeRateBig = BigDecimal.valueOf(withdrawFeeRate);
-        BigDecimal moneyBig = BigDecimal.valueOf(money);
-        double withdrawFee = withdrawFeeRateBig.multiply(moneyBig).doubleValue();
+        double withdrawFee = CommonMathMethod.bigDecimalMultiply(withdrawFeeRate, money);
         double balance = deposit.get(currency);
         if (money + withdrawFee > balance) {
             return 0;
@@ -164,7 +152,7 @@ public class Account {
             transaction1.insertTransactionIntoDatabase();
             Transaction transaction2 = new Transaction(withdrawFee, currency, TransactionType.WITHDRAW_FEE, owner, this.getNumber(), date);
             transaction2.insertTransactionIntoDatabase();
-            deposit.put(currency, twoDecimal(balance - money - withdrawFee));
+            deposit.put(currency, CommonMathMethod.twoDecimal(balance - money - withdrawFee));
             updateDepositInDatabase(currency);
             transactions.add(transaction1);
             transactions.add(transaction2);
@@ -208,10 +196,8 @@ public class Account {
             if (currentBalance >= 1000) {
                 int loop = day;
                 while (loop > 0) {
-                    BigDecimal saveInterestRateBig = BigDecimal.valueOf(0.0002);
-                    BigDecimal currentBalanceBig = BigDecimal.valueOf(currentBalance);
-                    double saveInterest = saveInterestRateBig.multiply(currentBalanceBig).doubleValue();
-                    deposit.put(currency, twoDecimal(currentBalance + saveInterest));
+                    double saveInterest = CommonMathMethod.bigDecimalMultiply(currentBalance, 0.0002);
+                    deposit.put(currency, CommonMathMethod.twoDecimal(currentBalance + saveInterest));
                     updateDepositInDatabase(currency);
                     currentBalance += saveInterest;
                     loop--;

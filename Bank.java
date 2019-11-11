@@ -239,7 +239,7 @@ public class Bank {
             Currency currency = transaction.getCurrency();
             double transMoney = -transaction.getMoney();
             double earnedMoney = moneyEarned.get(currency);
-            moneyEarned.put(currency, Account.twoDecimal(transMoney + earnedMoney));
+            moneyEarned.put(currency, CommonMathMethod.twoDecimal(transMoney + earnedMoney));
         }
         return moneyEarned;
     }
@@ -260,7 +260,7 @@ public class Bank {
         List<List<String>> ls = Database.queryData(stockTableName, queryIndex, queryValue, stockArgs);
         for (List<String> stock : ls) {
             double prevPrice = Double.valueOf(stock.get(1));
-            double change = Account.twoDecimal((price - prevPrice) / prevPrice);
+            double change = CommonMathMethod.fourDecimal((price - prevPrice) / prevPrice);
             stocks.get(name).setChange(change);
         }
         stocks.get(name).setPrice(price);
@@ -323,7 +323,7 @@ public class Bank {
     		for (String name: stocks.keySet()) {
     			table[i][0] = name;
     			table[i][1] = String.valueOf(stocks.get(name).getUSDPrice());
-    			table[i][2] = String.valueOf(stocks.get(name).getChange());
+    			table[i][2] = String.valueOf(CommonMathMethod.bigDecimalMultiply(stocks.get(name).getChange(), 100.0)) + "%";
     			table[i][3] = String.valueOf(stocks.get(name).getShares());
     			i++;
     		}

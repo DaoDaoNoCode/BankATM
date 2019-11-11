@@ -34,14 +34,12 @@ public class CheckingAccount extends Account {
             return -1;
         }
         double transferFeeRate = 0.01;
-        BigDecimal transferFeeRateBig = BigDecimal.valueOf(transferFeeRate);
-        BigDecimal moneyBig = BigDecimal.valueOf(money);
-        double transferFee = transferFeeRateBig.multiply(moneyBig).doubleValue();
+        double transferFee = CommonMathMethod.bigDecimalMultiply(transferFeeRate, money);
         double balance = deposit.get(currency);
         if (money + transferFee > balance) {
             return 0;
         } else {
-            deposit.put(currency, twoDecimal(balance - money - transferFee));
+            deposit.put(currency, CommonMathMethod.twoDecimal(balance - money - transferFee));
             updateDepositInDatabase(currency);
             Transaction transaction1 = new Transaction(-money, currency, TransactionType.TRANSFER_OUT, owner, super.getNumber(), date);
             transaction1.insertTransactionIntoDatabase();
@@ -60,7 +58,7 @@ public class CheckingAccount extends Account {
 
     private void transferIn(double money, Currency currency) {
         double balance = deposit.get(currency);
-        deposit.put(currency, twoDecimal(balance + money));
+        deposit.put(currency, CommonMathMethod.twoDecimal(balance + money));
         updateDepositInDatabase(currency);
     }
 
