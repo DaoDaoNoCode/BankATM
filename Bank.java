@@ -257,28 +257,26 @@ public class Bank {
         // Find old price from Database
         String[] queryIndex = {"STOCK_NAME"};
         String[] queryValue = {name};
-        List<List<String>> ls = Database.queryData(bankerTableName, queryIndex, queryValue, stockArgs);
+        List<List<String>> ls = Database.queryData(stockTableName, queryIndex, queryValue, stockArgs);
         for (List<String> stock : ls) {
             double prevPrice = Double.valueOf(stock.get(1));
-            double change = (price - prevPrice) / prevPrice;
-
-            // update change in Database
-            String[] args = {"CHANGE_PERCENTAGE"};
-            String[] updateValues = {Double.toString(change)};
-            Database.updateData(stockTableName, "STOCK_NAME", name, args, updateValues);
+            double change = Account.twoDecimal((price - prevPrice) / prevPrice);
+            stocks.get(name).setChange(change);
         }
-
         stocks.get(name).setPrice(price);
-        String[] updateArgs = {"PRICE"};
-        String[] updateValues = {Double.toString(price)};
-        Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
 
+    public void setStockShare(String name, int shares) {
+        // Find old shares from Database
+        String[] queryIndex = {"STOCK_NAME"};
+        String[] queryValue = {name};
+        stocks.get(name).setShares(shares);
+    }
 
     public HashMap<String, Integer> getBuyersNum() {
         HashMap<String, Integer> res = new HashMap<>();
         for (String key : stocks.keySet()) {
-            res.put(key ,0);
+            res.put(key , 0);
         }
         for (Customer customer : customers) {
             HashMap<String, Stock> temp = customer.getSecurityAccounts().getStocks();
@@ -304,21 +302,18 @@ public class Bank {
     public void addNewStock(String name, double price, int shares, double change) {
         Stock newStock = new Stock(name, price, shares, change);
         stocks.put(name, newStock);
-        String[] insertArgs = {name, Double.toString(price), Integer.toString(shares), Double.toString(change) };
-        Database.insertData(stockTableName, insertArgs);
-
     }
     public void addStockShare(String name, int shares) {
         stocks.get(name).buyShares(shares);
         String[] updateArgs = {"SHARE"};
-        String[] updateValues = {"SHARE + " + shares};
+        String[] updateValues = {String.valueOf(shares)};
         Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
 
     public void reduceStockShare(String name, int shares) {
         stocks.get(name).sellShares(shares);
         String[] updateArgs = {"SHARE"};
-        String[] updateValues = {"SHARE - " + shares};
+        String[] updateValues = {String.valueOf(shares)};
         Database.updateData(stockTableName, "STOCK_NAME", name, updateArgs, updateValues);
     }
  

@@ -59,15 +59,32 @@ public class Stock {
     // for Bank
     public void setPrice(double price) {
         this.price = price;
-        String[] queryIndex = {stockPrimaryKey};
-        String[] queryValue = {name};
-        Database.updateData(stockTableName, "PRICE", Double.toString(price), queryIndex, queryValue);
+        String[] args = {"PRICE"};
+        String[] updateValue = {Double.toString(price)};
+        Database.updateData(stockTableName, stockPrimaryKey, name, args, updateValue);
+    }
+
+    // for Bank
+    public void setShares(int shares) {
+        this.shares = shares;
+        String[] args = {"SHARE"};
+        String[] updateValue = {Integer.toString(shares)};
+        Database.updateData(stockTableName, stockPrimaryKey, name, args, updateValue);
+    }
+
+    // for Bank
+    public void setChange(double change) {
+        this.change = change;
+        String[] args = {"CHANGE_PERCENTAGE"};
+        String[] updateValues = {Double.toString(change)};
+        Database.updateData(stockTableName, "STOCK_NAME", name, args, updateValues);
     }
 
     // for customer
     public void buyShares (int i) {
         this.shares += i;
     }
+
     public void sellShares (int i) {
         this.shares -= i;
     }

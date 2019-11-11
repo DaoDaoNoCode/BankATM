@@ -123,7 +123,7 @@ public class MainPanel extends AtmPanel{
 			break;
 		}
 		case "security":{//view security
-			String[] names = {"View Stocks", "Cloce Account"};
+			String[] names = {"View Stocks", "Close Account"};
 			int[] sizes = {17, 17};
 			buttonNum = 2;
 			setButtons(names, sizes, 2);
@@ -136,9 +136,13 @@ public class MainPanel extends AtmPanel{
 			setRadio("Holding Shares", "All Stocks");
 			Object[][] context = {};
 			String[] column = {"Name", "Price", "Change", "Shares"};
-			data = new DefaultTableModel(context, column);
+			data = new DefaultTableModel(context, column) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};;
 			table = new JTable(data);
-			table.setEnabled(false);
 			jsp = new JScrollPane(table);
 			setTable();
 			showName();
@@ -151,9 +155,13 @@ public class MainPanel extends AtmPanel{
 			setTitle("View Stocks");
 			Object[][] context = {};
 			String[] column = {"Name", "Price", "Change", "Shares"};
-			data = new DefaultTableModel(context, column);
+			data = new DefaultTableModel(context, column) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};;
 			table = new JTable(data);
-			table.setEnabled(false);
 			jsp = new JScrollPane(table);
 			setTable();
 			showBalance();
@@ -188,9 +196,13 @@ public class MainPanel extends AtmPanel{
 			showStocks();
 			Object[][] context = {};
 			Object[] column = {"Holder", "Shares"};
-			data = new DefaultTableModel(context, column);
+			data = new DefaultTableModel(context, column) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
 			table = new JTable(data);
-			table.setEnabled(false);
 			jsp = new JScrollPane(table);
 			setTable();
 			next = new NextButton("Set");
@@ -474,7 +486,6 @@ public class MainPanel extends AtmPanel{
 		
 		if (stock!=null)
 			resetStocks();
-		
 	}
 	
 	//reset functions
@@ -890,7 +901,7 @@ public class MainPanel extends AtmPanel{
 					if (amountField.getText().length() > 0) {
 						double price = Double.parseDouble(amountField.getText());
 						if (price > 0){
-							stock.setPrice(price);
+							bank.setStockPrice(stock.getName(), price);
 						}
 						else {
 							requestFailMsg();
@@ -900,11 +911,8 @@ public class MainPanel extends AtmPanel{
 					if (shareField.getText().length() > 0) {
 						int shares = Integer.parseInt(shareField.getText());
 						if (shares>0) {
-							if (shares > stock.getShares()) {
-								bank.addStockShare(stock.getName(), shares-stock.getShares());
-							}
-							else if (shares < stock.getShares()) {
-								bank.reduceStockShare(stock.getName(), stock.getShares()-shares);
+							if (shares != stock.getShares()) {
+								bank.setStockShare(stock.getName(), shares);
 							}
 							else if (amountField.getText().length() == 0){
 	    							JOptionPane.showMessageDialog(null, 
