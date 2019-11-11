@@ -221,7 +221,7 @@ public class Bank {
         }
         for (Transaction transaction : bankerTransactions) {
             Currency currency = transaction.getCurrency();
-            double transMoney = transaction.getMoney();
+            double transMoney = -transaction.getMoney();
             double earnedMoney = moneyEarned.get(currency);
             moneyEarned.put(currency, Account.twoDecimal(transMoney + earnedMoney));
         }

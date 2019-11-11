@@ -138,6 +138,7 @@ public class MainPanel extends AtmPanel{
 			String[] column = {"Name", "Price", "Change", "Shares"};
 			data = new DefaultTableModel(context, column);
 			table = new JTable(data);
+			table.setEnabled(false);
 			jsp = new JScrollPane(table);
 			setTable();
 			showName();
@@ -152,6 +153,7 @@ public class MainPanel extends AtmPanel{
 			String[] column = {"Name", "Price", "Change", "Shares"};
 			data = new DefaultTableModel(context, column);
 			table = new JTable(data);
+			table.setEnabled(false);
 			jsp = new JScrollPane(table);
 			setTable();
 			showBalance();
@@ -188,6 +190,7 @@ public class MainPanel extends AtmPanel{
 			Object[] column = {"Holder", "Shares"};
 			data = new DefaultTableModel(context, column);
 			table = new JTable(data);
+			table.setEnabled(false);
 			jsp = new JScrollPane(table);
 			setTable();
 			next = new NextButton("Set");

@@ -126,6 +126,6 @@ public class Transaction {
     }
 
     public String toString(Bank bank) {
-        return " " + getDateString() + " | " + this.money + " " + this.currency + " | " + this.transactionType + " | Customer " + this.customer + " | " + this.account;
+        return " " + getDateString() + " | " + this.money + " " + this.currency + " | " + this.transactionType + " | Customer " + this.customer + " | Account " + this.account;
     }
 }

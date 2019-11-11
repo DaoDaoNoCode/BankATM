@@ -137,7 +137,7 @@ public class SecurityAccount extends Account {
     }
     
     public String toString() {
-    		return type.toString();
+    		return type + " - " + number;
     }
     
     public String[][] stockTable(){
