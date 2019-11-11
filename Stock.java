@@ -56,6 +56,10 @@ public class Stock {
     		return this.change;
     }
 
+    public boolean someoneHasShare() {
+        return true;
+    }
+
     // for Bank
     public void setPrice(double price) {
         this.price = price;

@@ -60,7 +60,7 @@ public class SecurityAccount extends Account {
     }
 
     /* 
-        UI ��������ѡ��: 
+        UI
         currency, saving account, 
         Stockname, shares
     */                
@@ -149,7 +149,7 @@ public class SecurityAccount extends Account {
 		for (String name: stocks.keySet()) {
 			table[i][0] = name;
 			table[i][1] = String.valueOf(stocks.get(name).getUSDPrice());
-			table[i][2] = String.valueOf(stocks.get(name).getChange());
+			table[i][2] = String.valueOf(CommonMathMethod.bigDecimalMultiply(stocks.get(name).getChange(), 100.0)) + "%";
 			table[i][3] = String.valueOf(stocks.get(name).getShares());
 			i++;
 		}
