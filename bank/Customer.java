@@ -51,6 +51,9 @@ public class Customer {
 
     public void setPassword(String password) {
         this.password = password;
+        String[] args = {"PASSWORD"};
+        String[] updateValues = {password};
+        Database.updateData("CUSTOMER", "USERNAME", this.getUsername(), args, updateValues);
     }
 
     public ArrayList<SavingsAccount> getSavingsAccounts() {
