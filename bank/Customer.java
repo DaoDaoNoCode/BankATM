@@ -187,6 +187,9 @@ public class Customer {
             Database.updateData(savingsAccountTableName, "ACCOUNT_NUMBER", account.getNumber(), args, updateValues);
         } else {
             this.securityAccount = null;
+            String[] args = {"STATUS"};
+            String[] updateValues = {"CLOSED"};
+            Database.updateData(securityAccountTableName, "ACCOUNT_NUMBER", account.getNumber(), args, updateValues);
         }
     }
 
