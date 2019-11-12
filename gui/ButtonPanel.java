@@ -22,7 +22,7 @@ public class ButtonPanel extends MainPanel {
             case "main": {
                 String[] names = {"Open an Account", "View My Accounts", "Transfer",
                         "Request Loans"};
-                int[] sizes = {17, 15, 20, 17};
+                int[] sizes = {17, 17, 20, 17};
                 setButtons(names, sizes, 4);
                 buttonNum = 4;
                 setTitle("Select Your Transaction");
@@ -181,10 +181,18 @@ public class ButtonPanel extends MainPanel {
                         n == 0 ? "One day added!" : "Three days added!", "Update Date", JOptionPane.INFORMATION_MESSAGE);
             } else if (panelName.equals("manager") && (n == 5)) {
                 newStocks();
-            } else if ((panelName.equals("view") && (n == 3))
-                    || (panelName.equals("security") && (n == 1))) {
+            } else if (panelName.equals("view") && (n == 3)) {
                 closeAccount();
                 super.backward();
+            } else if (panelName.equals("security") && (n == 1)) {
+            		if (customer.getSecurityAccounts().getStocks().size()>0)
+            			JOptionPane.showMessageDialog(null,
+            					"Your cannot close your security account while holding stocks!",
+            					"Request Failed", JOptionPane.ERROR_MESSAGE);
+            		else {
+            			closeAccount();
+            			super.backward();
+            		}
             } else if (panelName.equals("openopt") && (n == 2)
                     && customer.getSecurityAccounts() != null) {
                 JOptionPane.showMessageDialog(null,
