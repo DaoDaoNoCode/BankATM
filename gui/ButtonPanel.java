@@ -22,7 +22,7 @@ public class ButtonPanel extends MainPanel {
             case "main": {
                 String[] names = {"Open an Account", "View My Accounts", "Transfer",
                         "Request Loans"};
-                int[] sizes = {17, 17, 20, 17};
+                int[] sizes = {17, 15, 20, 17};
                 setButtons(names, sizes, 4);
                 buttonNum = 4;
                 setTitle("Select Your Transaction");

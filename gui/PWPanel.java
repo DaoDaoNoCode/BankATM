@@ -219,7 +219,7 @@ public class PWPanel extends AtmPanel {
                     super.forward();
                 } else
                     JOptionPane.showMessageDialog(null,
-                            "Incorrect username or password.",
+                            "Incorrect username or password!",
                             "Request Failed", JOptionPane.ERROR_MESSAGE);
                 break;
             }
@@ -232,21 +232,24 @@ public class PWPanel extends AtmPanel {
                     }
                 }
                 JOptionPane.showMessageDialog(null,
-                        "ID does not exist.",
+                        "Username does not exist!",
                         "Request Failed", JOptionPane.ERROR_MESSAGE);
                 break;
             }
             case "PW": {
                 if (pwField.blank()) {
                     JOptionPane.showMessageDialog(null,
-                            "Please enter a password.",
+                            "Please enter a password!",
                             "Request Failed", JOptionPane.ERROR_MESSAGE);
                 } else if (!pwField.getPW().equals(confField.getPW())) {
                     JOptionPane.showMessageDialog(null,
-                            "Please repeat with the same password.",
+                            "Please repeat with the same password!",
                             "Request Failed", JOptionPane.ERROR_MESSAGE);
                 } else {
                     customer.setPassword(pwField.getPW());
+                    JOptionPane.showMessageDialog(null,
+                            "Reset Password Successfully!",
+                            "Reset Password", JOptionPane.INFORMATION_MESSAGE);
                     super.forward();
                 }
                 break;
@@ -286,7 +289,7 @@ public class PWPanel extends AtmPanel {
                 String confirm = confField.getPW();
                 if (pwField.blank() || confField.blank()) {
                     JOptionPane.showMessageDialog(null,
-                            "Password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+                            "Password cannot be empty!", "Request Failed", JOptionPane.ERROR_MESSAGE);
                 } else {
                     if (!password.equals(confirm)) {
                         JOptionPane.showMessageDialog(null, "Please repeat with the same password!", "Request Failed", JOptionPane.ERROR_MESSAGE);
