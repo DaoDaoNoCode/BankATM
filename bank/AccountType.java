@@ -1,3 +1,4 @@
+package bank;
 /**
  * Two types of account: savings and checking.
  */

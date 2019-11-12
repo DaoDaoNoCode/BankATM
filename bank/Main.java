@@ -1,3 +1,5 @@
+package bank;
+import gui.Initializer;
 /**
  * This is the main class and the entrance of the program.
  */

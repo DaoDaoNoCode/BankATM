@@ -1,3 +1,4 @@
+package bank;
 public class Stock {
     private final String stockTableName = "STOCK";
 

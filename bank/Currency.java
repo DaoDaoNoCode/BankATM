@@ -1,3 +1,4 @@
+package bank;
 /**
  * Three types of currency: USD, CNY and EUR.
  */

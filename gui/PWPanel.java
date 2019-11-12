@@ -1,11 +1,10 @@
-import gui.AtmPWField;
-import gui.AtmTextField;
-import gui.NextButton;
+package gui;
 
 import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import bank.*;
 
 //password setting/entering
 @SuppressWarnings("serial")

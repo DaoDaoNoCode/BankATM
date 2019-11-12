@@ -1,4 +1,7 @@
+package gui;
 import java.util.Date;
+
+import bank.Bank;
 
 public class Initializer {
     StartPanel newStart;
@@ -11,28 +14,28 @@ public class Initializer {
     PWPanel newSavings;
     PWPanel newSecurity;
 
-    MainPanel newMain;
-    MainPanel newOpenopt;
-    MainPanel newSelect;
-    MainPanel newView;
-    MainPanel newViewSecurity;
-    MainPanel newWithdraw;
-    MainPanel newDeposit;
-    MainPanel newTransfer;
-    MainPanel newLoans;
-    MainPanel newCustomerTrans;
-    MainPanel newBankerTrans;
-    MainPanel newViewLoans;
+    ButtonPanel newMain;
+    ButtonPanel newOpenopt;
+    SelectPanel newSelect;
+    ButtonPanel newView;
+    ButtonPanel newViewSecurity;
+    ButtonPanel newWithdraw;
+    ButtonPanel newDeposit;
+    SelectPanel newTransfer;
+    SelectPanel newLoans;
+    TransactionPanel newCustomerTrans;
+    TransactionPanel newBankerTrans;
+    TablePanel newViewLoans;
     //MainPanel newSecurityTrans;
-    MainPanel newManager;
-    MainPanel newDaily;
-    MainPanel newAccounts;
+    ButtonPanel newManager;
+    TransactionPanel newDaily;
+    SelectPanel newAccounts;
 
-    MainPanel newStocks;
-    MainPanel newSellStocks;
-    MainPanel newBuyStocks;
-    MainPanel newViewStocks;
-    MainPanel newSetStocks;
+    TablePanel newStocks;
+    SelectPanel newSellStocks;
+    SelectPanel newBuyStocks;
+    TablePanel newViewStocks;
+    TablePanel newSetStocks;
 
     public Initializer(Bank newBank) {
         //new panels
@@ -49,28 +52,28 @@ public class Initializer {
         newSavings = new PWPanel("savings", newFrame, newBank, newDate);
         newSecurity = new PWPanel("security", newFrame, newBank, newDate);
 
-        newMain = new MainPanel("main", newFrame, newBank, newDate);
-        newOpenopt = new MainPanel("openopt", newFrame, newBank, newDate);
-        newSelect = new MainPanel("select", newFrame, newBank, newDate);
-        newView = new MainPanel("view", newFrame, newBank, newDate);
-        newViewSecurity = new MainPanel("security", newFrame, newBank, newDate);
-        newWithdraw = new MainPanel("withdraw", newFrame, newBank, newDate);
-        newDeposit = new MainPanel("deposit", newFrame, newBank, newDate);
-        newTransfer = new MainPanel("transfer", newFrame, newBank, newDate);
-        newLoans = new MainPanel("loans", newFrame, newBank, newDate);
-        newCustomerTrans = new MainPanel("transactions", newFrame, newBank, newDate);
-        newBankerTrans = new MainPanel("transactions", newFrame, newBank, newDate);
-        newViewLoans = new MainPanel("viewloans", newFrame, newBank, newDate);
+        newMain = new ButtonPanel("main", newFrame, newBank, newDate);
+        newOpenopt = new ButtonPanel("openopt", newFrame, newBank, newDate);
+        newSelect = new SelectPanel("select", newFrame, newBank, newDate);
+        newView = new ButtonPanel("view", newFrame, newBank, newDate);
+        newViewSecurity = new ButtonPanel("security", newFrame, newBank, newDate);
+        newWithdraw = new ButtonPanel("withdraw", newFrame, newBank, newDate);
+        newDeposit = new ButtonPanel("deposit", newFrame, newBank, newDate);
+        newTransfer = new SelectPanel("transfer", newFrame, newBank, newDate);
+        newLoans = new SelectPanel("loans", newFrame, newBank, newDate);
+        newCustomerTrans = new TransactionPanel("transactions", newFrame, newBank, newDate);
+        newBankerTrans = new TransactionPanel("transactions", newFrame, newBank, newDate);
+        newViewLoans = new TablePanel("viewloans", newFrame, newBank, newDate);
         //newSecurityTrans = new MainPanel("securitytrans", newFrame, newBank, newDate);
-        newManager = new MainPanel("manager", newFrame, newBank, newDate);
-        newDaily = new MainPanel("daily", newFrame, newBank, newDate);
-        newAccounts = new MainPanel("accounts", newFrame, newBank, newDate);
+        newManager = new ButtonPanel("manager", newFrame, newBank, newDate);
+        newDaily = new TransactionPanel("daily", newFrame, newBank, newDate);
+        newAccounts = new SelectPanel("accounts", newFrame, newBank, newDate);
 
-        newStocks = new MainPanel("stocks", newFrame, newBank, newDate);
-        newSellStocks = new MainPanel("sellstocks", newFrame, newBank, newDate);
-        newBuyStocks = new MainPanel("buystocks", newFrame, newBank, newDate);
-        newViewStocks = new MainPanel("viewstocks", newFrame, newBank, newDate);
-        newSetStocks = new MainPanel("setstocks", newFrame, newBank, newDate);
+        newStocks = new TablePanel("stocks", newFrame, newBank, newDate);
+        newSellStocks = new SelectPanel("sellstocks", newFrame, newBank, newDate);
+        newBuyStocks = new SelectPanel("buystocks", newFrame, newBank, newDate);
+        newViewStocks = new TablePanel("viewstocks", newFrame, newBank, newDate);
+        newSetStocks = new TablePanel("setstocks", newFrame, newBank, newDate);
         newFrame.setPanel(newWelcome);
     }
 
